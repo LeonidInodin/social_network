@@ -1,12 +1,17 @@
 package ru.inodinln.social_network.controllers;
 
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.UserCreationDTO;
-import ru.inodinln.social_network.dto.UserUpdateDTO;
-import ru.inodinln.social_network.dto.UserViewDTO;
+import ru.inodinln.social_network.dto.usersDTO.UserCreationDTO;
+import ru.inodinln.social_network.dto.usersDTO.UserUpdateDTO;
+import ru.inodinln.social_network.dto.usersDTO.UserViewDTO;
 import ru.inodinln.social_network.facades.UserFacade;
 import ru.inodinln.social_network.services.UserService;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -23,38 +28,42 @@ public class UserController {
 
     //get current users subscribees list:
     @GetMapping("/subscribees/{userId}")
-    public List<UserViewDTO> getSubscribeesOfUser(@PathVariable("userId") Long userId) { //responseEntity
-        return userFacade.getSubscribeesOfUser(userId);
+    public ResponseEntity<List<UserViewDTO>> getSubscribeesOfUser(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(userFacade.getSubscribeesOfUser(userId), HttpStatus.OK);
     }
 
-    ////////////////////////////Basic CRUD methods section///////////////////////////////////////
+    /**
+     * Basic CRUD methods section
+     */
     @GetMapping
-    public List<UserViewDTO> getAll(){ //responseEntity
-       return userFacade.findAll();
+    public ResponseEntity <List<UserViewDTO>> getAll(){
+       return new ResponseEntity<>(userFacade.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    public UserViewDTO getById(@PathVariable("userId") Long userId) { //responseEntity
-        return userFacade.findById(userId);
+    public ResponseEntity<UserViewDTO> getById(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(userFacade.findById(userId), HttpStatus.OK);
     }
 
     @PostMapping("/create")
-    public void create(@RequestBody UserCreationDTO newUserDTO) {
-        userFacade.save(newUserDTO);
+    public ResponseEntity<UserViewDTO> create(@RequestBody @Valid UserCreationDTO newUserDTO) {
+        return new ResponseEntity<>(userFacade.save(newUserDTO), HttpStatus.CREATED);
     }
 
-    @PostMapping("/update/{userId}")
-    public void update(@PathVariable("userId") Long userId, @RequestBody UserUpdateDTO updateUserDTO) {
-        userFacade.update(userId ,updateUserDTO);
+    @PutMapping("/update/{userId}")
+    public ResponseEntity<UserViewDTO> update(@PathVariable("userId") Long userId, @RequestBody UserUpdateDTO updateUserDTO) {
+        return new ResponseEntity<> (userFacade.update(userId ,updateUserDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")
-    public void delete(@PathVariable("userId") Long userId) {
+    public ResponseEntity<HttpStatus> delete(@PathVariable("userId") Long userId) {
         userService.delete(userId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/setRole/{userId}")
-    public void setRole(@PathVariable("userId") Long userId, @RequestParam("role") int role) {
+    public ResponseEntity<HttpStatus> setRole(@PathVariable("userId") Long userId, @RequestParam("role") int role) {
         userService.setRole(userId ,role);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

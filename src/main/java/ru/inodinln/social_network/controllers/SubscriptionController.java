@@ -1,8 +1,8 @@
 package ru.inodinln.social_network.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.SubscriptionCreationDTO;
-import ru.inodinln.social_network.dto.SubscriptionViewDTO;
+import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionCreationDTO;
+import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionViewDTO;
 import ru.inodinln.social_network.facades.SubscriptionFacade;
 import ru.inodinln.social_network.services.SubscriptionService;
 

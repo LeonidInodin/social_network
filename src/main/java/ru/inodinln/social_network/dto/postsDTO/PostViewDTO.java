@@ -1,18 +1,21 @@
-package ru.inodinln.social_network.dto;
+package ru.inodinln.social_network.dto.postsDTO;
+
+import lombok.Data;
+import ru.inodinln.social_network.entities.Post;
+import ru.inodinln.social_network.utils.interfaces.Convertable;
 
 import java.time.LocalDateTime;
 
-public class CommentViewDTO {
+@Data
+public class PostViewDTO implements Convertable<Post> {
 
     private Long id;
-
-    private Long post;
-
-    private Long author;
 
     private LocalDateTime dateTime;
 
     private  String text;
+
+    private Long author;
 
     public Long getId() {
         return id;
@@ -20,22 +23,6 @@ public class CommentViewDTO {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getPost() {
-        return post;
-    }
-
-    public void setPost(Long post) {
-        this.post = post;
-    }
-
-    public Long getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Long author) {
-        this.author = author;
     }
 
     public LocalDateTime getDateTime() {
@@ -52,5 +39,13 @@ public class CommentViewDTO {
 
     public void setText(String text) {
         this.text = text;
+    }
+
+    public Long getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Long author) {
+        this.author = author;
     }
 }

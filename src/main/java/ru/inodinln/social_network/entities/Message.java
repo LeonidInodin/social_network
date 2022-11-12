@@ -1,12 +1,16 @@
 package ru.inodinln.social_network.entities;
 
+import lombok.Data;
+import ru.inodinln.social_network.utils.interfaces.Convertable;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "messages")
-public class Message {
+public class Message implements Convertable<Message> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,44 +36,5 @@ public class Message {
         setDateTime(LocalDateTime.now());
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public User getFrom() {
-        return from;
-    }
-
-    public void setFrom(User from) {
-        this.from = from;
-    }
-
-    public User getTo() {
-        return to;
-    }
-
-    public void setTo(User to) {
-        this.to = to;
-    }
 }
 

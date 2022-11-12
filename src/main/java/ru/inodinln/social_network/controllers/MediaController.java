@@ -1,14 +1,10 @@
 package ru.inodinln.social_network.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.MediaCreationDTO;
-import ru.inodinln.social_network.dto.MediaViewDTO;
-import ru.inodinln.social_network.dto.MessageCreationDTO;
-import ru.inodinln.social_network.dto.MessageViewDTO;
+import ru.inodinln.social_network.dto.mediaDTO.MediaCreationDTO;
+import ru.inodinln.social_network.dto.mediaDTO.MediaViewDTO;
 import ru.inodinln.social_network.facades.MediaFacade;
-import ru.inodinln.social_network.facades.MessageFacade;
 import ru.inodinln.social_network.services.MediaService;
-import ru.inodinln.social_network.services.MessageService;
 
 import java.util.List;
 

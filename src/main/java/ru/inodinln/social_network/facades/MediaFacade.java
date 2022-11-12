@@ -2,8 +2,8 @@ package ru.inodinln.social_network.facades;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import ru.inodinln.social_network.dto.MediaCreationDTO;
-import ru.inodinln.social_network.dto.MediaViewDTO;
+import ru.inodinln.social_network.dto.mediaDTO.MediaCreationDTO;
+import ru.inodinln.social_network.dto.mediaDTO.MediaViewDTO;
 import ru.inodinln.social_network.entities.Media;
 import ru.inodinln.social_network.services.MediaService;
 

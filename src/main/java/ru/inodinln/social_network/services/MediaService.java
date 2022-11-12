@@ -3,14 +3,11 @@ package ru.inodinln.social_network.services;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.inodinln.social_network.entities.Media;
-import ru.inodinln.social_network.entities.Message;
-import ru.inodinln.social_network.exceptions.NotFoundException;
+import ru.inodinln.social_network.exceptions.businessException.NotFoundException;
 import ru.inodinln.social_network.repositories.MediaRepository;
-import ru.inodinln.social_network.repositories.MessageRepository;
 
 import java.io.*;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 

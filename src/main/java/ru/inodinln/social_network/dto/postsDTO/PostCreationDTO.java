@@ -1,20 +1,15 @@
-package ru.inodinln.social_network.dto;
+package ru.inodinln.social_network.dto.postsDTO;
 
-public class CommentCreationDTO {
+import lombok.Data;
+import ru.inodinln.social_network.entities.Post;
+import ru.inodinln.social_network.utils.interfaces.Convertable;
 
-    private Long post;
+@Data
+public class PostCreationDTO implements Convertable<Post> {
 
     private Long author;
 
     private String text;
-
-    public Long getPost() {
-        return post;
-    }
-
-    public void setPost(Long post) {
-        this.post = post;
-    }
 
     public Long getAuthor() {
         return author;

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.inodinln.social_network.entities.Subscription;
 import ru.inodinln.social_network.exceptions.DataException;
-import ru.inodinln.social_network.exceptions.NotFoundException;
+import ru.inodinln.social_network.exceptions.businessException.NotFoundException;
 import ru.inodinln.social_network.repositories.SubscriptionRepository;
 
 import java.util.List;

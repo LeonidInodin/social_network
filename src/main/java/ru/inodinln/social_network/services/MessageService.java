@@ -3,7 +3,7 @@ package ru.inodinln.social_network.services;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.inodinln.social_network.entities.Message;
-import ru.inodinln.social_network.exceptions.NotFoundException;
+import ru.inodinln.social_network.exceptions.businessException.NotFoundException;
 import ru.inodinln.social_network.repositories.MessageRepository;
 
 import java.util.List;

@@ -1,14 +1,19 @@
 package ru.inodinln.social_network.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+import ru.inodinln.social_network.utils.interfaces.Convertable;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements Convertable<User> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +28,8 @@ public class User {
     private String password;
 
     private LocalDate regDate;
+
+    private LocalDate birthDate;
 
     private int roleId;
 
@@ -46,94 +53,5 @@ public class User {
         setRegDate(LocalDate.now());
         setCountOfSubscribers(0);
         setRoleId(1);
-    }
-
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public LocalDate getRegDate() {
-        return regDate;
-    }
-
-    public void setRegDate(LocalDate regDate) {
-        this.regDate = regDate;
-    }
-
-    public int getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
-
-    public long getCountOfSubscribers() {
-        return countOfSubscribers;
-    }
-
-    public void setCountOfSubscribers(long countOfSubscribers) {
-        this.countOfSubscribers = countOfSubscribers;
-    }
-
-    public List<Subscription> getSubscriptions() {
-        return subscriptions;
-    }
-
-    public void setSubscriptions(List<Subscription> subscriptions) {
-        this.subscriptions = subscriptions;
-    }
-
-    public List<Message> getSendedMessages() {
-        return sendedMessages;
-    }
-
-    public void setSendedMessages(List<Message> sendedMessages) {
-        this.sendedMessages = sendedMessages;
-    }
-
-    public List<Message> getReceivedMessages() {
-        return receivedMessages;
-    }
-
-    public void setReceivedMessages(List<Message> receivedMessages) {
-        this.receivedMessages = receivedMessages;
     }
 }

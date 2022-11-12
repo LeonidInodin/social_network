@@ -1,12 +1,16 @@
 package ru.inodinln.social_network.entities;
 
+import lombok.Data;
+import ru.inodinln.social_network.utils.interfaces.Convertable;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Data
 @Entity
 @Table(name = "posts")
-public class Post {
+public class Post implements Convertable<Post> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,51 +41,4 @@ public class Post {
         setLikesCount(0L);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Long getLikesCount() {
-        return likesCount;
-    }
-
-    public void setLikesCount(Long likesCount) {
-        this.likesCount = likesCount;
-    }
-
-    public User getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(User author) {
-        this.author = author;
-    }
-
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 }

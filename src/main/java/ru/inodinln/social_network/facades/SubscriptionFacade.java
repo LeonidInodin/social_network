@@ -2,8 +2,8 @@ package ru.inodinln.social_network.facades;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import ru.inodinln.social_network.dto.SubscriptionCreationDTO;
-import ru.inodinln.social_network.dto.SubscriptionViewDTO;
+import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionCreationDTO;
+import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionViewDTO;
 import ru.inodinln.social_network.entities.Subscription;
 import ru.inodinln.social_network.services.SubscriptionService;
 

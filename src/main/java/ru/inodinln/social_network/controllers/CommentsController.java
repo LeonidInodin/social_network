@@ -1,8 +1,8 @@
 package ru.inodinln.social_network.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.CommentCreationDTO;
-import ru.inodinln.social_network.dto.CommentViewDTO;
+import ru.inodinln.social_network.dto.commentsDTO.CommentCreationDTO;
+import ru.inodinln.social_network.dto.commentsDTO.CommentViewDTO;
 import ru.inodinln.social_network.facades.CommentFacade;
 import ru.inodinln.social_network.services.CommentService;
 

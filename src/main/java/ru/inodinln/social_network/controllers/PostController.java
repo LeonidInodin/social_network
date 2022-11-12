@@ -1,8 +1,8 @@
 package ru.inodinln.social_network.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.PostCreationDTO;
-import ru.inodinln.social_network.dto.PostViewDTO;
+import ru.inodinln.social_network.dto.postsDTO.PostCreationDTO;
+import ru.inodinln.social_network.dto.postsDTO.PostViewDTO;
 import ru.inodinln.social_network.facades.PostFacade;
 import ru.inodinln.social_network.services.PostService;
 

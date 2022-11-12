@@ -1,11 +1,11 @@
-package ru.inodinln.social_network.exceptions;
+package ru.inodinln.social_network.exceptions.businessException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ValidationException extends RuntimeException{
-    public ValidationException(String message) {
+public class NotFoundException extends RuntimeException{
+    public NotFoundException(String message) {
         super(message);
     }
 }

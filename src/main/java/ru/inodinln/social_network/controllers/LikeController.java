@@ -1,8 +1,8 @@
 package ru.inodinln.social_network.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.LikeCreationDTO;
-import ru.inodinln.social_network.dto.LikeViewDTO;
+import ru.inodinln.social_network.dto.likesDTO.LikeCreationDTO;
+import ru.inodinln.social_network.dto.likesDTO.LikeViewDTO;
 import ru.inodinln.social_network.facades.LikeFacade;
 import ru.inodinln.social_network.services.LikeService;
 

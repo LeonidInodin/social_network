@@ -2,8 +2,8 @@ package ru.inodinln.social_network.facades;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import ru.inodinln.social_network.dto.PostCreationDTO;
-import ru.inodinln.social_network.dto.PostViewDTO;
+import ru.inodinln.social_network.dto.postsDTO.PostCreationDTO;
+import ru.inodinln.social_network.dto.postsDTO.PostViewDTO;
 import ru.inodinln.social_network.entities.Post;
 import ru.inodinln.social_network.services.PostService;
 

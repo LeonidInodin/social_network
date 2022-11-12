@@ -2,14 +2,10 @@ package ru.inodinln.social_network.facades;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import ru.inodinln.social_network.dto.CommentCreationDTO;
-import ru.inodinln.social_network.dto.CommentViewDTO;
-import ru.inodinln.social_network.dto.MessageCreationDTO;
-import ru.inodinln.social_network.dto.MessageViewDTO;
+import ru.inodinln.social_network.dto.commentsDTO.CommentCreationDTO;
+import ru.inodinln.social_network.dto.commentsDTO.CommentViewDTO;
 import ru.inodinln.social_network.entities.Comment;
-import ru.inodinln.social_network.entities.Message;
 import ru.inodinln.social_network.services.CommentService;
-import ru.inodinln.social_network.services.MessageService;
 
 import java.util.ArrayList;
 import java.util.List;

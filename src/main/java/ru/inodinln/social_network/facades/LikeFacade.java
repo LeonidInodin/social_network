@@ -2,8 +2,8 @@ package ru.inodinln.social_network.facades;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import ru.inodinln.social_network.dto.LikeCreationDTO;
-import ru.inodinln.social_network.dto.LikeViewDTO;
+import ru.inodinln.social_network.dto.likesDTO.LikeCreationDTO;
+import ru.inodinln.social_network.dto.likesDTO.LikeViewDTO;
 import ru.inodinln.social_network.entities.Like;
 import ru.inodinln.social_network.services.LikeService;
 

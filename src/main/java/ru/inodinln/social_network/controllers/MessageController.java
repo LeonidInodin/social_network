@@ -1,8 +1,8 @@
 package ru.inodinln.social_network.controllers;
 
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.MessageCreationDTO;
-import ru.inodinln.social_network.dto.MessageViewDTO;
+import ru.inodinln.social_network.dto.messagesDTO.MessageCreationDTO;
+import ru.inodinln.social_network.dto.messagesDTO.MessageViewDTO;
 import ru.inodinln.social_network.facades.MessageFacade;
 import ru.inodinln.social_network.services.MessageService;
 
