@@ -1,13 +1,12 @@
 package ru.inodinln.social_network.facades;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionCreationDTO;
+import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionCreatingDTO;
 import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionViewDTO;
-import ru.inodinln.social_network.entities.Subscription;
+import ru.inodinln.social_network.exceptions.ValidationService;
 import ru.inodinln.social_network.services.SubscriptionService;
+import ru.inodinln.social_network.utils.MapperService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -20,48 +19,35 @@ public class SubscriptionFacade {
     }
 
     //Get all subscriptions by current user:
-    public List<SubscriptionViewDTO> getSubscriptionsByUser(Long userId) {
-        return packListDTO(subscriptionService.getSubscriptionsByUser(userId));
+    public List<SubscriptionViewDTO> getSubscriptionsByUser(Long userId, Integer page, Integer itemsPerPage) {
+        return MapperService.mapperForCollectionOfSubscriptionViewDTO
+                (subscriptionService.getSubscriptionsByUser(userId, page, itemsPerPage));
     }
 
     //Get all subscriptions to current user:
-    public List<SubscriptionViewDTO> getSubscriptionsToUser(Long userId) {
-        return packListDTO(subscriptionService.getSubscriptionsToUser(userId));
+    public List<SubscriptionViewDTO> getSubscriptionsToUser(Long userId, Integer page, Integer itemsPerPage) {
+        return MapperService.mapperForCollectionOfSubscriptionViewDTO
+                (subscriptionService.getSubscriptionsToUser(userId, page, itemsPerPage));
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
-    public List<SubscriptionViewDTO> findAll(){
-        return packListDTO(subscriptionService.findAll());
+    public List<SubscriptionViewDTO> getAll(Integer page, Integer itemsPerPage){
+        return MapperService.mapperForCollectionOfSubscriptionViewDTO(subscriptionService.getAll(page, itemsPerPage));
     }
 
-    public SubscriptionViewDTO findById(Long subscrId){
-        return packDTO(subscriptionService.findById(subscrId));
+    public SubscriptionViewDTO getById(Long subscrId){
+        return MapperService.mapperForSingleSubscriptionViewDTO(subscriptionService.getById(subscrId));
     }
 
-    public void save(SubscriptionCreationDTO subscrDTO){
-        subscriptionService.save(subscrDTO.getFromId(), subscrDTO.getToId());
+    public SubscriptionViewDTO create(SubscriptionCreatingDTO subscrDTO){
+        ValidationService.subscriptionCreatingDtoValidation(subscrDTO);
+        return MapperService.mapperForSingleSubscriptionViewDTO
+                (subscriptionService.create(subscrDTO.getSubscriberId(), subscrDTO.getTargetId()));
     }
 
-    ////////////////////////////Service methods section///////////////////////////////////////
-
-    public List<SubscriptionViewDTO> packListDTO(List<Subscription> listOfSubscr){
-        List<SubscriptionViewDTO> listOfDTO = new ArrayList<>(listOfSubscr.size());
-        for (Subscription subscr : listOfSubscr) {
-
-            SubscriptionViewDTO dto = new SubscriptionViewDTO();
-            BeanUtils.copyProperties(subscr, dto);
-            dto.setFromId(subscr.getFrom().getId());
-            listOfDTO.add(dto);
-        }
-        return listOfDTO;
-    }
-
-    public SubscriptionViewDTO packDTO(Subscription subscr){
-        SubscriptionViewDTO dto = new SubscriptionViewDTO();
-        BeanUtils.copyProperties(subscr, dto);
-        dto.setFromId(subscr.getFrom().getId());
-        return dto;
+    public void delete(Long subscriptionId){
+        subscriptionService.delete(subscriptionId);
     }
 
 }

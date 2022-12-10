@@ -1,24 +1,22 @@
 package ru.inodinln.social_network.dto.mediaDTO;
 
 import lombok.Data;
-import ru.inodinln.social_network.entities.Media;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
 
 import java.time.LocalDateTime;
 
 @Data
-public class MediaViewDTO implements Convertable<Media> {
+public class MediaViewDTO {
 
     private Long id;
 
-    private Long post;
+    private Long postId;
 
-    private Long message;
+    private Long messageId;
 
     private String base64;
 
     private  String extension;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime timestamp;
 
 }

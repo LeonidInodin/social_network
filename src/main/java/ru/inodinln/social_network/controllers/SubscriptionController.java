@@ -1,10 +1,11 @@
 package ru.inodinln.social_network.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionCreationDTO;
+import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionCreatingDTO;
 import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionViewDTO;
 import ru.inodinln.social_network.facades.SubscriptionFacade;
-import ru.inodinln.social_network.services.SubscriptionService;
 
 import java.util.List;
 
@@ -14,44 +15,51 @@ public class SubscriptionController {
 
     private final SubscriptionFacade subscriptionFacade;
 
-    private final SubscriptionService subscriptionService;
-
-    public SubscriptionController (SubscriptionService subscriptionService, SubscriptionFacade subscriptionFacade) {
-        this.subscriptionService = subscriptionService;
+    public SubscriptionController(SubscriptionFacade subscriptionFacade) {
         this.subscriptionFacade = subscriptionFacade;
     }
 
+    ////////////////////////////Business methods section///////////////////////////////////////
     //Get all subscriptions by current user:
     @GetMapping("/SubscriptionsByUser/{userId}")
-    public List<SubscriptionViewDTO> getSubscriptionsByUser(@PathVariable("userId") Long userId){
-        return subscriptionFacade.getSubscriptionsByUser(userId);
+    public ResponseEntity<List<SubscriptionViewDTO>> getSubscriptionsByUser
+    (@PathVariable("userId") Long userId,
+     @RequestParam(required = false, defaultValue = "0") Integer page,
+     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+        return new ResponseEntity<>(subscriptionFacade.getSubscriptionsByUser(userId, page, itemsPerPage), HttpStatus.OK);
     }
 
     //Get all subscriptions to current user:
     @GetMapping("/SubscriptionsToUser/{userId}")
-    public List<SubscriptionViewDTO> getSubscriptionsToUser(@PathVariable("userId") Long userId){
-        return subscriptionFacade.getSubscriptionsToUser(userId);
+    public ResponseEntity<List<SubscriptionViewDTO>> getSubscriptionsToUser
+    (@PathVariable("userId") Long userId,
+     @RequestParam(required = false, defaultValue = "0") Integer page,
+     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+        return new ResponseEntity<>(subscriptionFacade.getSubscriptionsToUser(userId, page, itemsPerPage), HttpStatus.OK);
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
-    public List<SubscriptionViewDTO> findAll(){ //responseEntity
-        return subscriptionFacade.findAll();
+    public ResponseEntity<List<SubscriptionViewDTO>> getAll
+    (@RequestParam(required = false, defaultValue = "0") Integer page,
+     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+        return new ResponseEntity<>(subscriptionFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 
     @GetMapping("/{subscrId}")
-    public SubscriptionViewDTO findById(@PathVariable("subscrId") Long subscrId) {
-        return subscriptionFacade.findById(subscrId);
+    public ResponseEntity<SubscriptionViewDTO> getById(@PathVariable("subscrId") Long subscrId) {
+        return new ResponseEntity<>(subscriptionFacade.getById(subscrId), HttpStatus.OK);
     }
 
     @PostMapping
-    public void create(@RequestBody SubscriptionCreationDTO subscrDTO) {
-        subscriptionFacade.save(subscrDTO);
+    public ResponseEntity<SubscriptionViewDTO> create(@RequestBody SubscriptionCreatingDTO subscrDTO) {
+        return new ResponseEntity<>(subscriptionFacade.create(subscrDTO), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{subscrId}")
-    public void delete(@PathVariable("subscrId") Long subscrId) {
-        subscriptionService.delete(subscrId);
+    public ResponseEntity<Void> delete(@PathVariable("subscrId") Long subscrId) {
+        subscriptionFacade.delete(subscrId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 }

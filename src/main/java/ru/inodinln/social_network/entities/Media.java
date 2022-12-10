@@ -3,7 +3,6 @@ package ru.inodinln.social_network.entities;
 
 
 import lombok.Data;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,13 +10,13 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "media")
-public class Media implements Convertable<Media> {
+public class Media {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime timestamp;
 
     private  String path;
 
@@ -29,16 +28,16 @@ public class Media implements Convertable<Media> {
     private String base64;
 
     @ManyToOne
-    @JoinColumn(name = "post", referencedColumnName = "id")
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
     private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "message", referencedColumnName = "id")
+    @JoinColumn(name = "message_id", referencedColumnName = "id")
     private Message message;
 
    @PrePersist
     private void prePersist() {
-        setDateTime(LocalDateTime.now());
+        timestamp = LocalDateTime.now();
     }
 
 }

@@ -1,5 +1,6 @@
 package ru.inodinln.social_network.services;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.inodinln.social_network.entities.Media;
@@ -7,7 +8,6 @@ import ru.inodinln.social_network.exceptions.businessException.NotFoundException
 import ru.inodinln.social_network.repositories.MediaRepository;
 
 import java.io.*;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 
@@ -21,8 +21,6 @@ public class MediaService {
 
     private final MessageService messageService;
 
-    String[] fileTypes = new String[] {"jpg", "png", "jpeg", "mp4", "mpg", "avi"};
-
     public MediaService(MediaRepository mediaRepository, PostService postService, MessageService messageService) {
         this.mediaRepository = mediaRepository;
         this.postService = postService;
@@ -32,11 +30,11 @@ public class MediaService {
 
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
-    public List<Media> findAll() {
-        return mediaRepository.findAll();
+    public List<Media> getAll(Integer page, Integer itemsPerPage) {
+        return mediaRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
     }
 
-    public Media findById(Long mediaId) {
+    public Media getById(Long mediaId) {
         Media media = mediaRepository.findById(mediaId).orElseThrow(() ->
                 new NotFoundException("Media not found with id " + mediaId));
         File file = new File(media.getPath());
@@ -45,66 +43,52 @@ public class MediaService {
     }
 
     @Transactional
-    public void save(Long messageId, Long postId, String base64, String extension) {
-        //String type = "Images";
+    public Media create(Long messageId, Long postId, String base64, String extension) {
 
-           // type = "Images";
-       // if ((post != null)&(message == null))
-
-          //  type = "Images";
         Media media = new Media();
-        media.setDateTime(LocalDateTime.now()); //WTF?
         media.setExtension(extension);
-        if ((postId == null)&(messageId != null))
-            media.setMessage(messageService.findById(messageId));
-        else media.setPost(postService.findById(postId));
-            media.setBase64(base64);
+        if (postId == null) {
+            media.setMessage(messageService.getById(messageId));
+            media.setPost(null);
+        }
+        else {
+            media.setPost(postService.getById(postId));
+            media.setMessage(null);
+        }
+        media.setBase64(base64);
 
-        media.setName(media.getDateTime().toString().replace(':', '_'));
-        media.setPath("F:/Prog/FileStorage/" + media.getName() + "." + media.getExtension());
-        //if (extension.equals("png") || extension.equals("jpg")){
-          //  type = "Images";
-       // }
-        byte[] img = Base64.getDecoder().decode(media.getBase64());
+        media.setName(media.getTimestamp().toString().replace(':', '_'));
+        media.setPath("D:/Prog/FileStorage/" + media.getName() + "." + media.getExtension());
+
+        byte[] mediaFile = Base64.getDecoder().decode(media.getBase64());
         try (OutputStream stream = new FileOutputStream(media.getPath())) {
-            stream.write(img);
+            stream.write(mediaFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-        mediaRepository.save(media);
+        return mediaRepository.save(media);
     }
 
     @Transactional
     public void delete(Long mediaId) {
-        Media media = mediaRepository.findById(mediaId).orElseThrow(() ->
-                new NotFoundException("Media not found with id " + mediaId));
-        mediaRepository.delete(media);}
+        mediaRepository.delete(getById(mediaId));}
 
 
     ////////////////////////////Service methods section///////////////////////////////////////
-   // public boolean fileTypeValidation(String extension) {
-
-        //Arrays.stream(fileTypes).findFirst(() --> equals(extension)).orElseThrow()
-   // }
 
     private String encodeFileToBase64Binary(File file){
-        String encodedfile = null;
+        String base64string = null;
         try (FileInputStream fileInputStreamReader = new FileInputStream(file)){
 
             byte[] bytes = new byte[(int)file.length()];
             fileInputStreamReader.read(bytes);
-            encodedfile = Base64.getEncoder().encodeToString(bytes);
-        } catch (FileNotFoundException e) {
-
-            e.printStackTrace();
+            base64string = Base64.getEncoder().encodeToString(bytes);
         } catch (IOException e) {
 
             e.printStackTrace();
         }
 
-        return encodedfile;
+        return base64string;
     }
 
 }

@@ -1,10 +1,11 @@
 package ru.inodinln.social_network.services;
 
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.inodinln.social_network.entities.Subscription;
-import ru.inodinln.social_network.exceptions.DataException;
+import ru.inodinln.social_network.exceptions.businessException.BusinessException;
 import ru.inodinln.social_network.exceptions.businessException.NotFoundException;
 import ru.inodinln.social_network.repositories.SubscriptionRepository;
 
@@ -25,47 +26,58 @@ public class SubscriptionService {
     ////////////////////////////Business methods section///////////////////////////////////////
 
     //Get all subscriptions by current user:
-    public List<Subscription> getSubscriptionsByUser(Long userId) {
-        return subscriptionRepository.findByFrom_IdIs(userId);
+    public List<Subscription> getSubscriptionsByUser(Long userId, Integer page, Integer itemsPerPage) {
+        return subscriptionRepository.findBySubscriber(userService.getById(userId), PageRequest.of(page, itemsPerPage))
+                .orElseThrow(() -> new NotFoundException("Not found subscriptions by user with id " + userId));
     }
 
     //Get all subscriptions to current user:
-    public List<Subscription> getSubscriptionsToUser(Long userId) {
-        return subscriptionRepository.findByToIdIs(userId);
+    public List<Subscription> getSubscriptionsToUser(Long userId, Integer page, Integer itemsPerPage) {
+        return subscriptionRepository.findByTarget(userService.getById(userId), PageRequest.of(page, itemsPerPage))
+                .orElseThrow(() -> new NotFoundException("Not found subscriptions to user with id " + userId));
     }
 
-    //Check is exists new subscription
-    public Subscription findByIdOfUsers(Long fromId, Long toId){
-        return subscriptionRepository.findByFrom_IdAndToId(fromId, toId);
-    }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
-    public List<Subscription> findAll() {
-        return subscriptionRepository.findAll();
+    public List<Subscription> getAll(Integer page, Integer itemsPerPage) {
+        return subscriptionRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
     }
 
-    public Subscription findById(long subscrId) {
+    public Subscription getById(long subscrId) {
         return subscriptionRepository.findById(subscrId).orElseThrow(() ->
-                new NotFoundException("Subscription not found with id " + subscrId));
+                new NotFoundException("Not found subscription with id " + subscrId));
     }
 
     @Transactional
-    public void save(Long fromId, Long toId) {
-        if (findByIdOfUsers(fromId, toId) == null) {
+    public Subscription create(Long subscriberId, Long targetId) {
+        if (subscriptionRepository.findBySubscriberAndTarget(userService.getById(subscriberId),
+                userService.getById(targetId)) != null)
+            throw new BusinessException("Subscription by user with id " + subscriberId
+                    + " to user with id " + targetId + "is already exists");
         Subscription subscr = new Subscription();
-        subscr.setFrom(userService.findById(fromId));
-        userService.incrCountOfSubscr(toId);
-        subscr.setToId(toId);
-        subscriptionRepository.save(subscr);}
-        else throw new DataException("Database contains this subscription yet");
+        subscr.setSubscriber(userService.getById(subscriberId));
+        subscr.setSubscriber(userService.getById(targetId));
+        Subscription subscriptionForReturn = save(subscr);
+        userService.increaseCountOfSubscr(targetId);
+        return subscriptionForReturn;
+    }
+
+    public Subscription save(Subscription subscription){
+        return subscriptionRepository.save(subscription);
     }
 
     @Transactional
     public void delete(Long subscrId) {
-        Subscription subscr = subscriptionRepository.findById(subscrId).orElseThrow(() ->
-                new NotFoundException("Subscription not found with id " + subscrId));
-        subscriptionRepository.delete(subscr);
+        Subscription subscription = getById(subscrId);
+        subscriptionRepository.delete(subscription);
+        userService.decreaseCountOfSubscr(subscription.getTarget().getId());
+
+    }
+
+    public List<Subscription> getAllSubscriptionsByUser(Long userId) {
+        return subscriptionRepository.findBySubscriber(userService.getById(userId))
+                .orElseThrow(() -> new NotFoundException("Not found subscriptions by user with id " + userId));
     }
 
 }

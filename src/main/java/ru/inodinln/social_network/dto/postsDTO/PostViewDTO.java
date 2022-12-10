@@ -1,51 +1,29 @@
 package ru.inodinln.social_network.dto.postsDTO;
 
 import lombok.Data;
-import ru.inodinln.social_network.entities.Post;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
+import ru.inodinln.social_network.dto.mediaDTO.MediaViewDTO;
+import ru.inodinln.social_network.dto.usersDTO.UserReducedViewDTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
-public class PostViewDTO implements Convertable<Post> {
+public class PostViewDTO {
 
     private Long id;
 
-    private LocalDateTime dateTime;
+    private UserReducedViewDTO author;
+
+    private LocalDateTime timestamp;
+
+    private LocalDateTime timestampOfUpdating;
 
     private  String text;
 
-    private Long author;
+    private List<MediaViewDTO> mediaList;
 
-    public Long getId() {
-        return id;
-    }
+    private Long likesCount;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private Long commentsCount;
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(LocalDateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public Long getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(Long author) {
-        this.author = author;
-    }
 }

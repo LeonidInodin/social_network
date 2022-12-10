@@ -1,13 +1,11 @@
 package ru.inodinln.social_network.dto.commentsDTO;
 
 import lombok.Data;
-import ru.inodinln.social_network.entities.Comment;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
 
 import java.time.LocalDateTime;
 
 @Data
-public class CommentViewDTO implements Convertable<Comment> {
+public class CommentViewDTO {
 
     private Long id;
 
@@ -15,8 +13,14 @@ public class CommentViewDTO implements Convertable<Comment> {
 
     private Long author;
 
-    private LocalDateTime dateTime;
+    private Long parentComment;
 
-    private  String text;
+    private LocalDateTime timestamp;
+
+    private LocalDateTime timestampOfUpdating;
+
+    private Integer level;
+
+    private String text;
 
 }

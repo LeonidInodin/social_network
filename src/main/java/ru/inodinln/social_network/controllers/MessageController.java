@@ -1,10 +1,11 @@
 package ru.inodinln.social_network.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.messagesDTO.MessageCreationDTO;
+import ru.inodinln.social_network.dto.messagesDTO.MessageCreatingDTO;
 import ru.inodinln.social_network.dto.messagesDTO.MessageViewDTO;
 import ru.inodinln.social_network.facades.MessageFacade;
-import ru.inodinln.social_network.services.MessageService;
 
 import java.util.List;
 
@@ -14,41 +15,42 @@ public class MessageController {
 
     private final MessageFacade messageFacade;
 
-    private final MessageService messageService;
-
-    public MessageController (MessageService messageService, MessageFacade messageFacade) {
-        this.messageService = messageService;
+    public MessageController(MessageFacade messageFacade) {
         this.messageFacade = messageFacade;
     }
 
-    @GetMapping("/userSended/{userId}")
-    public List<MessageViewDTO> findUserSendedMessages(@PathVariable("userId") Long userId){ //responseEntity
-        return messageFacade.findUserSendedMessages(userId);
+
+    ////////////////////////////Business methods section///////////////////////////////////////
+
+    @GetMapping("/userSent/{userId}")
+    public ResponseEntity<List<MessageViewDTO>> getUserSentMessages(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(messageFacade.getUserSentMessages(userId), HttpStatus.OK);
     }
 
     @GetMapping("/userReceived/{userId}")
-    public List<MessageViewDTO> findUserReceivedMessages(@PathVariable("userId") Long userId){
-        return messageFacade.findUserReceivedMessages(userId);
+    public ResponseEntity<List<MessageViewDTO>> getUserReceivedMessages(@PathVariable("userId") Long userId) {
+        return new ResponseEntity<>(messageFacade.getUserReceivedMessages(userId), HttpStatus.OK);
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
-    public List<MessageViewDTO> findAll(){ //responseEntity
-        return messageFacade.findAll();
+    public ResponseEntity<List<MessageViewDTO>> getAll() {
+        return new ResponseEntity<>(messageFacade.getAll(), HttpStatus.OK);
     }
 
     @GetMapping("/{messageId}")
-    public MessageViewDTO findById(@PathVariable("messageId") Long messageId) {
-        return messageFacade.findById(messageId);
+    public ResponseEntity<MessageViewDTO> getById(@PathVariable("messageId") Long messageId) {
+        return new ResponseEntity<>(messageFacade.getById(messageId), HttpStatus.OK);
     }
 
     @PostMapping
-    public void create(@RequestBody MessageCreationDTO messageDTO) {
-        messageFacade.save(messageDTO);
+    public ResponseEntity<MessageViewDTO> create(@RequestBody MessageCreatingDTO messageDTO) {
+        return new ResponseEntity<>(messageFacade.create(messageDTO), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{messageId}")
-    public void delete(@PathVariable("messageId") Long messageId) {
-        messageService.delete(messageId);
+    public ResponseEntity<Void> delete(@PathVariable("messageId") Long messageId) {
+        messageFacade.delete(messageId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

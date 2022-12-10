@@ -1,17 +1,20 @@
 package ru.inodinln.social_network.services;
 
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
-import org.springframework.dao.DataIntegrityViolationException;
+
+import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.inodinln.social_network.entities.Post;
 import ru.inodinln.social_network.entities.Subscription;
 import ru.inodinln.social_network.entities.User;
-import ru.inodinln.social_network.exceptions.DataException;
 import ru.inodinln.social_network.exceptions.businessException.NotFoundException;
 import ru.inodinln.social_network.repositories.UserRepository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -19,71 +22,107 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    SubscriptionService subscriptionService;
+    private final SubscriptionService subscriptionService;
 
-    public UserService(UserRepository userRepository, SubscriptionService subscriptionService) {
+    private final ConversationService conversationService;
+
+    private final PostService postService;
+
+    public UserService(UserRepository userRepository, SubscriptionService subscriptionService,
+                       @Lazy ConversationService conversationService, @Lazy PostService postService) {
         this.userRepository = userRepository;
         this.subscriptionService = subscriptionService;
+        this.conversationService = conversationService;
+        this.postService = postService;
+    }
+    ////////////////////////////Business methods section///////////////////////////////////////
+
+    public List<User> getMembersByConversationId(Long conversationId, Integer page, Integer itemsPerPage){
+        return userRepository.findUsersByConversationsContains
+                (conversationService.getById(conversationId), PageRequest.of(page, itemsPerPage));
     }
 
-    //get current user's subscribees list:
-    public List<User> getSubscribeesOfUser(Long userId){
-        List<Subscription> listOfSubscr = subscriptionService.getSubscriptionsByUser(userId);
-        List<User> listOfUsers = new ArrayList<>(listOfSubscr.size());
-        for (Subscription subscr : listOfSubscr) {
-            User user = userRepository.findById(subscr.getToId()).orElseThrow(() ->
-                    new NotFoundException("Subscription not found with id " + subscr.getToId()));
-            listOfUsers.add(user);
-        }
-        return listOfUsers;
+    ////////////////////////////Statistics methods section///////////////////////////////////////
+
+    public Map<User, Double> get10mostActive(LocalDate startOfPeriod, LocalDate endOfPeriod){
+        long daysCount = ChronoUnit.DAYS.between(endOfPeriod, startOfPeriod);
+        return postService.getPostsByTimestampBetween(startOfPeriod, endOfPeriod)
+                .stream().collect(Collectors
+                        .toMap(Post::getAuthor, (e) -> (double) postService.getPostsByUserId(e.getId()).size()/daysCount))
+                .entrySet().stream().sorted(Map.Entry.<User, Double>comparingByValue().reversed())
+                .limit(10).collect(Collectors.toMap(Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (a, b) -> a,
+                        LinkedHashMap::new));
     }
 
-    //Set user's role:
     @Transactional
     public void setRole(Long userId, Integer role) {
-        findById(userId).setRoleId(role);
+        getById(userId).setRoleId(role);
     }
 
-    public void incrCountOfSubscr(Long userId){
-        User user = findById(userId);
-        user.setCountOfSubscribers(user.getCountOfSubscribers()+1);
+    @Transactional
+    public void increaseCountOfSubscr(Long userId) {
+        User user = getById(userId);
+        user.setCountOfSubscribers(user.getCountOfSubscribers() + 1L);
+        save(user);
+    }
+
+    @Transactional
+    public void decreaseCountOfSubscr(Long userId) {
+        User user = getById(userId);
+        user.setCountOfSubscribers(user.getCountOfSubscribers() - 1L);
+        if (user.getCountOfSubscribers() < 0)
+            user.setCountOfSubscribers(0L);
+        save(user);
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
-    public List<User> findAll() {
-        return userRepository.findAll();
+    public List<User> getAll(Integer page, Integer itemsPerPage) {
+        return userRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
     }
 
-    public User findById(Long userId){
+    public User getById(Long userId) {
         return userRepository.findById(userId).orElseThrow(() ->
                 new NotFoundException("User not found with id " + userId));
     }
 
-    @Transactional
-    public User save(User newUser) {
-        try {userRepository.save(newUser);
-        }
-        catch (DataIntegrityViolationException e) {
-            throw new DataException(e.getMostSpecificCause().getMessage());
-        }
-        return findById(newUser.getId());
+    public User create(String firstName, String lastName, String eMail, String password, LocalDate birthDate) {
+        User newUser = new User();
+        newUser.setFirstName(firstName);
+        newUser.setLastName(lastName);
+        newUser.setEmail(eMail);
+        newUser.setPassword(password);
+        newUser.setBirthDate(birthDate);
+        return save(newUser);
     }
 
     @Transactional
-    public User update(User userToBeUpdated) {
-        try {userRepository.save(userToBeUpdated);
-        }
-        catch (DataIntegrityViolationException e) {
-            throw new DataException(e.getMostSpecificCause().getMessage());
-        }
-        return findById(userToBeUpdated.getId());
+    public User save(User newUser) {
+        return userRepository.save(newUser);
+    }
+
+    @Transactional
+    public User update(Long id, String firstName, String lastName, String eMail, String password, LocalDate birthDate) {
+        User userToBeUpdated = getById(id);
+        userToBeUpdated.setFirstName(firstName);
+        userToBeUpdated.setLastName(lastName);
+        userToBeUpdated.setEmail(eMail);
+        userToBeUpdated.setPassword(password);
+        userToBeUpdated.setBirthDate(birthDate);
+        return save(userToBeUpdated);
     }
 
     @Transactional
     public void delete(Long userId) {
-        User userToBeDeleted = findById(userId);
-        userRepository.delete(userToBeDeleted);
+        userRepository.delete(getById(userId));
+    }
+
+    ////////////////////////////Service methods section///////////////////////////////////////
+    public List<User> getTargetsOfUserByUserId(Long userId) {
+        return subscriptionService.getAllSubscriptionsByUser(userId)
+                .stream().map(Subscription::getTarget).collect(Collectors.toList());
     }
 
 }

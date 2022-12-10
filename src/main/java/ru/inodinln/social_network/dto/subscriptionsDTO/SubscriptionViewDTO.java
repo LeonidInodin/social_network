@@ -1,20 +1,19 @@
 package ru.inodinln.social_network.dto.subscriptionsDTO;
 
 import lombok.Data;
-import ru.inodinln.social_network.entities.Subscription;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
+import ru.inodinln.social_network.dto.usersDTO.UserReducedViewDTO;
 
 import java.time.LocalDateTime;
 
 @Data
-public class SubscriptionViewDTO implements Convertable<Subscription> {
+public class SubscriptionViewDTO {
 
     private Long id;
 
     private LocalDateTime dateTime;
 
-    private Long fromId;
+    private UserReducedViewDTO subscriber;
 
-    private Long toId;
+    private UserReducedViewDTO target;
 
 }

@@ -1,21 +1,30 @@
 package ru.inodinln.social_network.dto.messagesDTO;
 
 import lombok.Data;
-import ru.inodinln.social_network.entities.Message;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
+import ru.inodinln.social_network.dto.mediaDTO.MediaViewDTO;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
-public class MessageViewDTO implements Convertable<Message> {
+public class MessageViewDTO {
 
     private Long id;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime timestamp;
+
+    private LocalDateTime timestampOfUpdating;
 
     private  String text;
 
-    private Long from;
+    private Long conversationId;
 
-    private Long to;
+    private Long dialogId;
+
+    private Long senderId;
+
+    private Long recipientId;
+
+    private List<MediaViewDTO> media;
 
 }

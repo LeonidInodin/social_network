@@ -2,22 +2,19 @@ package ru.inodinln.social_network.entities;
 
 
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "users")
-public class User implements Convertable<User> {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     private String firstName;
 
@@ -31,27 +28,43 @@ public class User implements Convertable<User> {
 
     private LocalDate birthDate;
 
-    private int roleId;
+    private Integer roleId;
 
-    private long countOfSubscribers;
+    private Long countOfSubscribers;
 
-    //@JsonIgnore
-    @OneToMany(mappedBy = "from")
-    private List<Subscription> subscriptions;
+    @ManyToMany(mappedBy = "members")
+    private List<Conversation> conversations;
 
-    @OneToMany(mappedBy = "from")
-    private List<Message> sendedMessages;
+    @OneToMany(mappedBy = "author")
+    private List<Dialog> authorDialogs;
 
-    @OneToMany(mappedBy = "to")
+    @OneToMany(mappedBy = "companion")
+    private List<Dialog> companionDialogs;
+
+    @OneToMany(mappedBy = "target")
+    private List<Subscription> subscriptionsToItself;
+
+    @OneToMany(mappedBy = "subscriber")
+    private List<Subscription> subscriptionsToOther;
+
+    @OneToMany(mappedBy = "sender")
+    private List<Message> sentMessages;
+
+    @OneToMany(mappedBy = "recipient")
     private List<Message> receivedMessages;
 
     @OneToMany(mappedBy = "author")
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "author")
+    private List<Like> likes;
+
+
     @PrePersist
     private void prePersist() {
-        setRegDate(LocalDate.now());
-        setCountOfSubscribers(0);
-        setRoleId(1);
+        regDate = LocalDate.now();
+        countOfSubscribers = 0L;
+        roleId = 1;
     }
+
 }

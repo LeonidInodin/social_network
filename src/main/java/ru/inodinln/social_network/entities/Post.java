@@ -1,7 +1,6 @@
 package ru.inodinln.social_network.entities;
 
 import lombok.Data;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,15 +9,19 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "posts")
-public class Post implements Convertable<Post> {
+public class Post {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime timestamp;
+
+    private LocalDateTime timestampOfUpdating;
 
     private String text;
+
+    private Long commentsCount;
 
     private Long likesCount;
 
@@ -37,8 +40,9 @@ public class Post implements Convertable<Post> {
 
     @PrePersist
     private void prePersist() {
-        setDateTime(LocalDateTime.now());
-        setLikesCount(0L);
+        timestamp = LocalDateTime.now();
+        commentsCount = 0L;
+        likesCount = 0L;
     }
 
 }

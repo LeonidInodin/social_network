@@ -1,10 +1,13 @@
 package ru.inodinln.social_network.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.commentsDTO.CommentCreationDTO;
+import ru.inodinln.social_network.dto.commentsDTO.CommentCreatingDTO;
+import ru.inodinln.social_network.dto.commentsDTO.CommentUpdatingDTO;
 import ru.inodinln.social_network.dto.commentsDTO.CommentViewDTO;
+import ru.inodinln.social_network.dto.commentsDTO.CommentsTreeViewDTO;
 import ru.inodinln.social_network.facades.CommentFacade;
-import ru.inodinln.social_network.services.CommentService;
 
 import java.util.List;
 
@@ -14,31 +17,55 @@ public class CommentsController {
 
     private final CommentFacade commentFacade;
 
-    private final CommentService commentService;
-
-    public CommentsController(CommentService commentService, CommentFacade commentFacade) {
-        this.commentService = commentService;
+    public CommentsController(CommentFacade commentFacade) {
         this.commentFacade = commentFacade;
     }
 
+    ////////////////////////////Business methods section///////////////////////////////////////
+
+    @GetMapping("commentsTree/post/{postId}")
+    public ResponseEntity<List<CommentsTreeViewDTO>> getCommentsTreeByPostId
+            (@PathVariable("postId") Long postId,
+             @RequestParam(required = false, defaultValue = "0") Integer page,
+             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+        return new ResponseEntity<>(commentFacade.getCommentsTreeByPostId(postId, page, itemsPerPage), HttpStatus.OK);
+    }
+
+    @GetMapping("/post/{postId}")
+    public ResponseEntity<List<CommentViewDTO>> getCommentsByPostId
+            (@PathVariable("postId") Long postId,
+             @RequestParam(required = false, defaultValue = "0") Integer page,
+             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+        return new ResponseEntity<>(commentFacade.getCommentsByPostId(postId, page, itemsPerPage), HttpStatus.OK);
+    }
+
+
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
-    public List<CommentViewDTO> findAll(){ //responseEntity
-        return commentFacade.findAll();
+    public ResponseEntity<List<CommentViewDTO>> getAll(
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+        return new ResponseEntity<>(commentFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 
     @GetMapping("/{commentId}")
-    public CommentViewDTO findById(@PathVariable("commentId") Long commentId) {
-        return commentFacade.findById(commentId);
+    public ResponseEntity<CommentViewDTO> getById(@PathVariable("commentId") Long commentId) {
+        return new ResponseEntity<>(commentFacade.getById(commentId), HttpStatus.OK);
     }
 
     @PostMapping
-    public void create(@RequestBody CommentCreationDTO commentDTO) {
-        commentFacade.save(commentDTO);
+    public ResponseEntity<CommentViewDTO> create(@RequestBody CommentCreatingDTO commentDTO) {
+        return new ResponseEntity<>(commentFacade.create(commentDTO), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<CommentViewDTO> update(@RequestBody CommentUpdatingDTO updateCommentDTO) {
+        return new ResponseEntity<>(commentFacade.update(updateCommentDTO), HttpStatus.OK);
     }
 
     @DeleteMapping("/{commentId}")
-    public void delete(@PathVariable("commentId") Long commentId) {
-        commentService.delete(commentId);
+    public ResponseEntity<Void> delete(@PathVariable("commentId") Long commentId) {
+        commentFacade.delete(commentId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

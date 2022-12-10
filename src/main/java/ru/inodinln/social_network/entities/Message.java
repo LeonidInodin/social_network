@@ -1,7 +1,6 @@
 package ru.inodinln.social_network.entities;
 
 import lombok.Data;
-import ru.inodinln.social_network.utils.interfaces.Convertable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -10,30 +9,40 @@ import java.util.List;
 @Data
 @Entity
 @Table(name = "messages")
-public class Message implements Convertable<Message> {
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime timestamp;
 
     private  String text;
 
-    @ManyToOne
-    @JoinColumn(name = "from_id", referencedColumnName = "id")
-    private User from;
+    private LocalDateTime timestampOfUpdating;
 
     @ManyToOne
-    @JoinColumn(name = "to_id", referencedColumnName = "id")
-    private User to;
+    @JoinColumn(name = "conversation_id", referencedColumnName = "id")
+    private Conversation conversation;
+
+    @ManyToOne
+    @JoinColumn(name = "dialog_id", referencedColumnName = "id")
+    private Dialog dialog;
+
+    @ManyToOne
+    @JoinColumn(name = "sender_id", referencedColumnName = "id")
+    private User sender;
+
+    @ManyToOne
+    @JoinColumn(name = "recipient_id", referencedColumnName = "id")
+    private User recipient;
 
     @OneToMany(mappedBy = "message")
     private List<Media> media;
 
     @PrePersist
     private void prePersist() {
-        setDateTime(LocalDateTime.now());
+        timestamp = LocalDateTime.now();
     }
 
 }

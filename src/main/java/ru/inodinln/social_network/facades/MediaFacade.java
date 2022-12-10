@@ -1,13 +1,12 @@
 package ru.inodinln.social_network.facades;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import ru.inodinln.social_network.dto.mediaDTO.MediaCreationDTO;
+import ru.inodinln.social_network.dto.mediaDTO.MediaCreatingDTO;
 import ru.inodinln.social_network.dto.mediaDTO.MediaViewDTO;
-import ru.inodinln.social_network.entities.Media;
+import ru.inodinln.social_network.exceptions.ValidationService;
 import ru.inodinln.social_network.services.MediaService;
+import ru.inodinln.social_network.utils.MapperService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,55 +14,27 @@ public class MediaFacade {
 
     private final MediaService mediaService;
 
-    public MediaFacade(MediaService mediaService){
+    public MediaFacade(MediaService mediaService) {
         this.mediaService = mediaService;
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
-    public List<MediaViewDTO> findAll(){
-       return packListDTO(mediaService.findAll());
+    public List<MediaViewDTO> getAll(Integer page, Integer itemsPerPage) {
+        return MapperService.mapperForCollectionOfMediaViewDTO(mediaService.getAll(page, itemsPerPage));
     }
 
-   public MediaViewDTO findById(Long mediaId){
-        return packDTO(mediaService.findById(mediaId));
+    public MediaViewDTO getById(Long mediaId) {
+        return MapperService.mapperForSingleMediaViewDTO(mediaService.getById(mediaId));
     }
 
-    public void save(MediaCreationDTO mediaDTO) {
-        mediaService.save(mediaDTO.getMessage(), mediaDTO.getPost(), mediaDTO.getBase64(), mediaDTO.getExtension());
+    public MediaViewDTO create(MediaCreatingDTO dto) {
+        ValidationService.mediaCreatingDtoValidation(dto);
+        return MapperService.mapperForSingleMediaViewDTO(mediaService.create
+                (dto.getMessageId(), dto.getPostId(), dto.getBase64(), dto.getExtension()));
     }
 
-    ////////////////////////////Service methods section///////////////////////////////////////
-
-    public List<MediaViewDTO> packListDTO(List<Media> listOfMedia){
-        List<MediaViewDTO> listOfDTO = new ArrayList<>(listOfMedia.size());
-        for (Media media : listOfMedia) {
-
-            MediaViewDTO dto = new MediaViewDTO();
-            BeanUtils.copyProperties(media, dto);
-            if ((media.getPost() == null)&(media.getMessage() != null)) {
-                dto.setMessage(media.getMessage().getId());
-                dto.setPost(0L);
-            }
-            else {dto.setPost(media.getPost().getId());
-                dto.setMessage(0L);
-            }
-
-            listOfDTO.add(dto);
-        }
-        return listOfDTO;
-    }
-
-    public MediaViewDTO packDTO(Media media){
-        MediaViewDTO dto = new MediaViewDTO();
-        BeanUtils.copyProperties(media, dto);
-        if ((media.getPost() == null)&(media.getMessage() != null)) {
-            dto.setMessage(media.getMessage().getId());
-            dto.setPost(0L);
-        }
-        else {dto.setPost(media.getPost().getId());
-            dto.setMessage(0L);
-        }
-        return dto;
+    public void delete(Long mediaId) {
+        mediaService.delete(mediaId);
     }
 }

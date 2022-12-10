@@ -1,8 +1,10 @@
 package ru.inodinln.social_network.services;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.inodinln.social_network.entities.Like;
+import ru.inodinln.social_network.entities.Post;
 import ru.inodinln.social_network.exceptions.businessException.NotFoundException;
 import ru.inodinln.social_network.repositories.LikeRepository;
 
@@ -24,27 +26,34 @@ public class LikeService {
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
-    public List<Like> findAll() {
-        return likeRepository.findAll();
+    public List<Like> getAll(Integer page, Integer itemsPerPage) {
+        return likeRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
     }
 
-    public Like findById(Long likeId) {
+    public Like getById(Long likeId) {
         return likeRepository.findById(likeId).orElseThrow(() ->
                 new NotFoundException("Like not found with id " + likeId));
     }
 
     @Transactional
-    public void save(Long authorId, Long postId) {
-        Like like = new Like();
-        like.setAuthor(userService.findById(authorId));
-        like.setPost(postService.findById(postId));
-        likeRepository.save(like);
+    public Like create(Long authorId, Long postId) {
+        Like newLike = new Like();
+        Post post = postService.getById(postId);
+        newLike.setAuthor(userService.getById(authorId));
+        newLike.setPost(postService.getById(postId));
+        Like likeForReturn = save(newLike);
+        post.setLikesCount(post.getLikesCount()+1L);
+        postService.save(post);
+        return likeForReturn;
+    }
+
+    @Transactional
+    public Like save(Like newLike) {
+        return likeRepository.save(newLike);
     }
 
     @Transactional
     public void delete(Long likeId) {
-        Like like = likeRepository.findById(likeId).orElseThrow(() ->
-                new NotFoundException("Like not found with id " + likeId));
-        likeRepository.delete(like);
+        likeRepository.delete(getById(likeId));
     }
 }

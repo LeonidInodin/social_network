@@ -1,10 +1,11 @@
 package ru.inodinln.social_network.controllers;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.inodinln.social_network.dto.mediaDTO.MediaCreationDTO;
+import ru.inodinln.social_network.dto.mediaDTO.MediaCreatingDTO;
 import ru.inodinln.social_network.dto.mediaDTO.MediaViewDTO;
 import ru.inodinln.social_network.facades.MediaFacade;
-import ru.inodinln.social_network.services.MediaService;
 
 import java.util.List;
 
@@ -14,10 +15,7 @@ public class MediaController {
 
     private final MediaFacade mediaFacade;
 
-    private final MediaService mediaService;
-
-    public MediaController(MediaService mediaService, MediaFacade mediaFacade) {
-        this.mediaService = mediaService;
+    public MediaController(MediaFacade mediaFacade) {
         this.mediaFacade = mediaFacade;
     }
 
@@ -25,22 +23,25 @@ public class MediaController {
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
-    public List<MediaViewDTO> findAll(){ //responseEntity
-        return mediaFacade.findAll();
+    public ResponseEntity<List<MediaViewDTO>> getAll
+    (@RequestParam(required = false, defaultValue = "0") Integer page,
+     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage){
+        return new ResponseEntity<>(mediaFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 
     @GetMapping("/{mediaId}")
-    public MediaViewDTO findById(@PathVariable("mediaId") Long mediaId) {
-        return mediaFacade.findById(mediaId);
+    public ResponseEntity<MediaViewDTO> getById(@PathVariable("mediaId") Long mediaId) {
+        return new ResponseEntity<>(mediaFacade.getById(mediaId), HttpStatus.OK);
     }
 
     @PostMapping
-    public void create(@RequestBody MediaCreationDTO mediaDTO) {
-        mediaFacade.save(mediaDTO);
+    public ResponseEntity<MediaViewDTO> create(@RequestBody MediaCreatingDTO mediaDTO) {
+        return new ResponseEntity<>(mediaFacade.create(mediaDTO), HttpStatus.CREATED);
     }
 
    @DeleteMapping("/{mediaId}")
-   public void delete(@PathVariable("mediaId") Long mediaId) {
-       mediaService.delete(mediaId);
+   public ResponseEntity<Void> delete(@PathVariable("mediaId") Long mediaId) {
+       mediaFacade.delete(mediaId);
+       return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
