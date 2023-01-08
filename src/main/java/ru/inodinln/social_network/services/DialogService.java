@@ -74,9 +74,9 @@ public class DialogService {
 
     @Transactional
     public Dialog create(Long authorId, Long companionId) {
-        Dialog newDialog = new Dialog();
         User author = userService.getById(authorId);
         User companion = userService.getById(companionId);
+        Dialog newDialog = new Dialog();
         if (dialogRepository.findDialogByAuthorAndCompanion(author, companion) != null
         || dialogRepository.findDialogByAuthorAndCompanion(companion, author) != null)
             throw new BusinessException("Dialog with these users already exists");

@@ -42,21 +42,23 @@ public class CommentFacade {
         return MapperService.mapperForSingleCommentViewDTO(commentService.getById(commentId));
     }
 
-    public CommentViewDTO create(CommentCreatingDTO creatingDto) {
+    public CommentViewDTO create(CommentCreatingDTO creatingDto, String currentEmail) {
 
         ValidationService.commentCreatingDtoValidation(creatingDto);
 
         return MapperService.mapperForSingleCommentViewDTO(commentService.create(creatingDto.getPost(),
-                creatingDto.getAuthor(), creatingDto.getParentComment(), creatingDto.getLevel(), creatingDto.getText()));
+                creatingDto.getAuthor(), creatingDto.getParentComment(),
+                creatingDto.getLevel(), creatingDto.getText(), currentEmail));
     }
 
-    public CommentViewDTO update(CommentUpdatingDTO updatingDTO) {
+    public CommentViewDTO update(CommentUpdatingDTO updatingDTO, String currentEmail) {
 
-        return MapperService.mapperForSingleCommentViewDTO(commentService.update(updatingDTO.getId(), updatingDTO.getText()));
+        return MapperService.mapperForSingleCommentViewDTO(commentService.update(updatingDTO.getId(),
+                updatingDTO.getText(), currentEmail));
     }
 
-    public void delete(Long commentId) {
-        commentService.delete(commentId);
+    public void delete(Long commentId, String currentEmail) {
+        commentService.delete(commentId, currentEmail);
     }
 
 }

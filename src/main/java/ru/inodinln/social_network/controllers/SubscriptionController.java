@@ -24,8 +24,8 @@ public class SubscriptionController {
     @GetMapping("/SubscriptionsByUser/{userId}")
     public ResponseEntity<List<SubscriptionViewDTO>> getSubscriptionsByUser
     (@PathVariable("userId") Long userId,
-     @RequestParam(required = false, defaultValue = "0") Integer page,
-     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+     @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+     @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(subscriptionFacade.getSubscriptionsByUser(userId, page, itemsPerPage), HttpStatus.OK);
     }
 
@@ -33,16 +33,16 @@ public class SubscriptionController {
     @GetMapping("/SubscriptionsToUser/{userId}")
     public ResponseEntity<List<SubscriptionViewDTO>> getSubscriptionsToUser
     (@PathVariable("userId") Long userId,
-     @RequestParam(required = false, defaultValue = "0") Integer page,
-     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+     @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+     @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(subscriptionFacade.getSubscriptionsToUser(userId, page, itemsPerPage), HttpStatus.OK);
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
     public ResponseEntity<List<SubscriptionViewDTO>> getAll
-    (@RequestParam(required = false, defaultValue = "0") Integer page,
-     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+    (@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+     @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(subscriptionFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 

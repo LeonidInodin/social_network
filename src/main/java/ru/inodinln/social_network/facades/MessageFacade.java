@@ -19,18 +19,20 @@ public class MessageFacade {
         this.messageService = messageService;
     }
 
-    public List<MessageViewDTO> getUserSentMessages(Long userId) {
-        return MapperService.mapperForCollectionOfMessageViewDTO(messageService.getUserSentMessages(userId));
+    public List<MessageViewDTO> getUserSentMessages(Long userId, Integer page, Integer itemsPerPage) {
+        return MapperService.mapperForCollectionOfMessageViewDTO
+                (messageService.getUserSentMessages(userId, page, itemsPerPage));
     }
 
-    public List<MessageViewDTO> getUserReceivedMessages(Long userId) {
-        return MapperService.mapperForCollectionOfMessageViewDTO(messageService.getUserReceivedMessages(userId));
+    public List<MessageViewDTO> getUserReceivedMessages(Long userId, Integer page, Integer itemsPerPage) {
+        return MapperService.mapperForCollectionOfMessageViewDTO
+                (messageService.getUserReceivedMessages(userId, page, itemsPerPage));
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
-    public List<MessageViewDTO> getAll(){
-        return MapperService.mapperForCollectionOfMessageViewDTO(messageService.getAll());
+    public List<MessageViewDTO> getAll(Integer page, Integer itemsPerPage){
+        return MapperService.mapperForCollectionOfMessageViewDTO(messageService.getAll(page, itemsPerPage));
     }
 
     public MessageViewDTO getById(Long messageId){

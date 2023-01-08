@@ -5,6 +5,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.inodinln.social_network.entities.Post;
+import ru.inodinln.social_network.entities.User;
 import ru.inodinln.social_network.exceptions.businessException.NotFoundException;
 import ru.inodinln.social_network.repositories.PostRepository;
 
@@ -13,6 +14,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static org.springframework.data.domain.Sort.Direction.DESC;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,9 +34,10 @@ public class PostService {
     ////////////////////////////Business methods section///////////////////////////////////////
 
     public List<Post> getNewsFeedByUserId(Long userId, Integer page, Integer itemsPerPage) {
-       return postRepository.findPostsByAuthorIn(userService.getTargetsOfUserByUserId(userId),
-               PageRequest.of(page, itemsPerPage, Sort.by("timestamp")))
-               .orElseThrow(() -> new NotFoundException("Not found posts for newsfeed by user with id " + userId));
+        return postRepository.getPostsByTarget(userService.getById(userId).getId(),
+                        PageRequest.of(page, itemsPerPage, Sort.by(DESC, "timestamp")))
+                .orElseThrow(() -> new NotFoundException("Not found posts for newsfeed for user with id " + userId));
+
     }
 
     public List<Post> getPostsByUserId(Long userId, Integer page, Integer itemsPerPage) {
@@ -43,20 +47,22 @@ public class PostService {
 
     ////////////////////////////Statistics methods section///////////////////////////////////////
 
-    public Double averageQuantityPerDayForThePeriod(LocalDate startOfPeriod, LocalDate endOfPeriod){
+    public Double averageQuantityPerDayForThePeriod(LocalDate startOfPeriod, LocalDate endOfPeriod) {
         return (double) quantityForThePeriod(startOfPeriod, endOfPeriod)
                 / ChronoUnit.DAYS.between(endOfPeriod, startOfPeriod);
 
     }
 
-    public Long quantityForThePeriod(LocalDate startOfPeriod, LocalDate endOfPeriod){
-        return postRepository.findCountPostsByTimestampBetween(startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay());
+    public Long quantityForThePeriod(LocalDate startOfPeriod, LocalDate endOfPeriod) {
+        Long l = postRepository.countPostsByTimestampBetween(startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay());
+        System.out.println(l);
+        return l;
 
     }
 
     public List<Post> get10mostPopularByLikes(LocalDate startOfPeriod, LocalDate endOfPeriod) {
         return postRepository.findPostsByTimestampBetween
-                (startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay(), Sort.by("likes_count"))
+                        (startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay(), Sort.by("likes_count"))
                 .orElseThrow(() -> new NotFoundException("Not found any posts"))
                 .stream().limit(10).collect(Collectors.toList());
     }
@@ -68,8 +74,6 @@ public class PostService {
                 .stream().limit(10).collect(Collectors.toList());
 
     }
-
-
 
     ////////////////////////////Service methods section///////////////////////////////////////
 
@@ -89,15 +93,8 @@ public class PostService {
         save(post);
     }
 
-    public List<Post> getPostsByTimestampBetween(LocalDate startOfPeriod, LocalDate endOfPeriod){
-        return postRepository.findPostsByTimestampBetween
-                (startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay())
-                .orElseThrow(() -> new NotFoundException("Not found any posts"));
-    }
-
-    public List<Post> getPostsByUserId(Long userId) {
-        return postRepository.findPostsByAuthor(userService.getById(userId))
-                .orElseThrow(() -> new NotFoundException("Not found posts by user with id " + userId));
+    public Long countPostsByAuthorAndTimestampBetween(User user, LocalDateTime startOfPeriod, LocalDateTime endOfPeriod) {
+        return  postRepository.countPostsByAuthorAndTimestampBetween(user, startOfPeriod, endOfPeriod);
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////

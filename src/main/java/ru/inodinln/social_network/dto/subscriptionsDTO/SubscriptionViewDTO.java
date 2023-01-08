@@ -10,7 +10,7 @@ public class SubscriptionViewDTO {
 
     private Long id;
 
-    private LocalDateTime dateTime;
+    private LocalDateTime timeStamp;
 
     private UserReducedViewDTO subscriber;
 

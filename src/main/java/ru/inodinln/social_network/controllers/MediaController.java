@@ -24,8 +24,8 @@ public class MediaController {
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
     public ResponseEntity<List<MediaViewDTO>> getAll
-    (@RequestParam(required = false, defaultValue = "0") Integer page,
-     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage){
+    (@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+     @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage){
         return new ResponseEntity<>(mediaFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 

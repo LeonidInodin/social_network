@@ -1,5 +1,6 @@
 package ru.inodinln.social_network.services;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.inodinln.social_network.entities.Conversation;
@@ -33,17 +34,17 @@ public class MessageService {
         this.dialogService = dialogService;
     }
 
-    public List<Message> getUserSentMessages(Long userId) {
-        return messageRepository.findBySenderIdIs(userId);
+    public List<Message> getUserSentMessages(Long userId, Integer page, Integer itemsPerPage) {
+        return messageRepository.findBySenderIdIs(userId, PageRequest.of(page, itemsPerPage));
     }
 
-    public List<Message> getUserReceivedMessages(Long userId) {
-        return messageRepository.findByRecipientIdIs(userId);
+    public List<Message> getUserReceivedMessages(Long userId, Integer page, Integer itemsPerPage) {
+        return messageRepository.findByRecipientIdIs(userId, PageRequest.of(page, itemsPerPage));
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
-    public List<Message> getAll() {
-        return messageRepository.findAll();
+    public List<Message> getAll(Integer page, Integer itemsPerPage) {
+        return messageRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
     }
 
     public Message getById(Long messageId) {
@@ -51,7 +52,7 @@ public class MessageService {
                 new NotFoundException("Message not found with id " + messageId));
     }
 
-    @Transactional
+    @Transactional //prop
     public Message create(String type, Long containerId, Long senderId, Long recipientId, String text) {
 
         Message newMessage = new Message();
@@ -61,7 +62,6 @@ public class MessageService {
 
         Conversation conversation;
         Dialog dialog;
-        Message messageForReturn;
 
         if (type.equals("Conversation")) {
             conversation = conversationService.getById(containerId);
@@ -79,9 +79,8 @@ public class MessageService {
 
             newMessage.setConversation(conversation);
             newMessage.setDialog(null);
-            messageForReturn = save(newMessage);
-            conversation.setActualTimestamp(messageForReturn.getTimestamp());
-            conversationService.save(conversation);
+            newMessage = save(newMessage);
+            conversation.setActualTimestamp(newMessage.getTimestamp());
         }
         else {
             dialog = dialogService.getById(containerId);
@@ -91,12 +90,11 @@ public class MessageService {
             newMessage.setRecipient(recipient);
             newMessage.setConversation(null);
             newMessage.setDialog(dialog);
-            messageForReturn = save(newMessage);
-            dialog.setActualTimestamp(messageForReturn.getTimestamp());
-            dialogService.save(dialog);
+            newMessage = save(newMessage);
+            dialog.setActualTimestamp(newMessage.getTimestamp());
         }
 
-        return messageForReturn;
+        return newMessage;
     }
 
     @Transactional

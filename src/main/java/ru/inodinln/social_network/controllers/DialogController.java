@@ -26,8 +26,8 @@ public class DialogController {
     @GetMapping("/userId/{userId}")
     public ResponseEntity<List<DialogReducedViewDTO>> getUsersDialogs
             (@PathVariable("userId") Long userId,
-             @RequestParam(required = false, defaultValue = "0") Integer page,
-             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+             @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(dialogFacade.getUsersDialogs(userId, page, itemsPerPage), HttpStatus.OK);
     }
 
@@ -36,8 +36,8 @@ public class DialogController {
     @GetMapping("/admin/userId/{userId}")
     public ResponseEntity<List<DialogViewDTO>> getDialogsByUserId
             (@PathVariable("userId") Long userId,
-             @RequestParam(required = false, defaultValue = "0") Integer page,
-             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+             @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(dialogFacade.getDialogsByUserId(userId, page, itemsPerPage), HttpStatus.OK);
     }
 
@@ -45,8 +45,8 @@ public class DialogController {
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
     public ResponseEntity<List<DialogViewDTO>> getAll
-    (@RequestParam(required = false, defaultValue = "0") Integer page,
-     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+    (@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+     @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(dialogFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 

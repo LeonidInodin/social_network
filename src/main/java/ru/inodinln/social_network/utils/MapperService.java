@@ -42,11 +42,11 @@ public class MapperService {
         return dto;
     }
 
-    public static List<StatisticsUserViewDTO> mapperForCollectionOfStatisticsUserViewDTO(Map<User, Double> map) {
-        return map.entrySet().stream().map(MapperService::mapperForSingleStatisticsUserViewDTO).collect(Collectors.toList());
+    public static List<StatisticsUserViewDTO> mapperForCollectionOfStatisticsUserViewDTO(List<Map.Entry<User, Long>> list) {
+        return list.stream().map(MapperService::mapperForSingleStatisticsUserViewDTO).collect(Collectors.toList());
     }
 
-    public static StatisticsUserViewDTO mapperForSingleStatisticsUserViewDTO(Map.Entry<User, Double> entry) {
+    public static StatisticsUserViewDTO mapperForSingleStatisticsUserViewDTO(Map.Entry<User, Long> entry) {
         StatisticsUserViewDTO dto = new StatisticsUserViewDTO();
         dto.setUser(mapperForSingleUserReducedViewDTO(entry.getKey()));
         dto.setValue(entry.getValue());

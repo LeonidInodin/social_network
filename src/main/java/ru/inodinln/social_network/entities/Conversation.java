@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "conversations")
+@Table(name = "conversation")
 public class Conversation {
 
     @Id
@@ -27,7 +27,7 @@ public class Conversation {
     private List<Message> messages;
 
     @ManyToMany
-    @JoinTable(name = "users_conversations",
+    @JoinTable(name = "users_conversation",
     joinColumns = @JoinColumn(name = "conversation_id"),
     inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<User> members;

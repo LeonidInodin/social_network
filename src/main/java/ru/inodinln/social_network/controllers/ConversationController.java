@@ -25,8 +25,8 @@ public class ConversationController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ConversationViewDTO>> getConversationsByUserId
             (@PathVariable("userId") Long userId,
-             @RequestParam(required = false, defaultValue = "0") Integer page,
-             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+             @RequestParam (name = "page",required = false, defaultValue = "0") Integer page,
+             @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(conversationFacade
                 .getConversationsByUserId(userId, page, itemsPerPage), HttpStatus.OK);
     }
@@ -48,8 +48,8 @@ public class ConversationController {
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
     public ResponseEntity<List<ConversationViewDTO>> getAll
-    (@RequestParam(required = false, defaultValue = "0") Integer page,
-     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+    (@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+     @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(conversationFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 

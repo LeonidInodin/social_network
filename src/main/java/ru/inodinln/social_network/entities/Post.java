@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 @Entity
-@Table(name = "posts")
+@Table(name = "post")
 public class Post {
 
     @Id
@@ -26,7 +26,7 @@ public class Post {
     private Long likesCount;
 
     @ManyToOne
-    @JoinColumn(name = "author", referencedColumnName = "id")
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 
     @OneToMany(mappedBy = "post")

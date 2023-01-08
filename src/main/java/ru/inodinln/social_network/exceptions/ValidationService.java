@@ -15,6 +15,7 @@ import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionCreatingDTO;
 import ru.inodinln.social_network.dto.usersDTO.UserCreatingDTO;
 import ru.inodinln.social_network.dto.usersDTO.UserUpdatingDTO;
 import ru.inodinln.social_network.exceptions.validationException.ValidationException;
+import ru.inodinln.social_network.security.Roles;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -194,10 +195,8 @@ public class ValidationService {
     public static void statisticsRequestDtoValidation(StatisticsRequestDTO dto){
         if (dto.getStartOfPeriod().isAfter(LocalDate.now()))
             throw new ValidationException("Period's start date can't be in the future");
-        if (dto.getEndOfPeriod().isAfter(LocalDate.now()))
+        if (dto.getEndOfPeriod().isAfter(LocalDate.now().plusDays(1)))
             throw new ValidationException("Period's end date can't be in the future");
-        if (dto.getStartOfPeriod().isEqual(dto.getEndOfPeriod()) || dto.getStartOfPeriod().isAfter(dto.getEndOfPeriod()))
-            throw new ValidationException("Period's start date can't be equals or after period's end date");
     }
 
 
@@ -205,6 +204,11 @@ public class ValidationService {
     public static void idValidation(Long id){
         if (id <= 0)
             throw new ValidationException("fields with id values must be greater then 0");
+    }
+
+    public static void roleValidation(String role){
+        if (!(role.equals(Roles.ROLE_ADMIN.toString())))
+            throw new ValidationException("Role must be equals ROLE_ADMIN value");
     }
 
 }

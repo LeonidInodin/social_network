@@ -37,7 +37,6 @@ public class SubscriptionService {
                 .orElseThrow(() -> new NotFoundException("Not found subscriptions to user with id " + userId));
     }
 
-
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
     public List<Subscription> getAll(Integer page, Integer itemsPerPage) {
@@ -57,12 +56,13 @@ public class SubscriptionService {
                     + " to user with id " + targetId + "is already exists");
         Subscription subscr = new Subscription();
         subscr.setSubscriber(userService.getById(subscriberId));
-        subscr.setSubscriber(userService.getById(targetId));
+        subscr.setTarget(userService.getById(targetId));
         Subscription subscriptionForReturn = save(subscr);
         userService.increaseCountOfSubscr(targetId);
         return subscriptionForReturn;
     }
 
+    @Transactional
     public Subscription save(Subscription subscription){
         return subscriptionRepository.save(subscription);
     }
@@ -73,11 +73,6 @@ public class SubscriptionService {
         subscriptionRepository.delete(subscription);
         userService.decreaseCountOfSubscr(subscription.getTarget().getId());
 
-    }
-
-    public List<Subscription> getAllSubscriptionsByUser(Long userId) {
-        return subscriptionRepository.findBySubscriber(userService.getById(userId))
-                .orElseThrow(() -> new NotFoundException("Not found subscriptions by user with id " + userId));
     }
 
 }

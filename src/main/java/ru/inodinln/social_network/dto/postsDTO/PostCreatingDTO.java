@@ -16,6 +16,4 @@ public class PostCreatingDTO {
     @Size(max = 1000, message = "Field \"text\" must contains maximum 1000 symbols")
     private String text;
 
-    //media
-
 }

@@ -3,6 +3,8 @@ package ru.inodinln.social_network.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.inodinln.social_network.dto.statisticsDTO.StatisticsRequestDTO;
 import ru.inodinln.social_network.dto.statisticsDTO.StatisticsUserViewDTO;
@@ -10,7 +12,6 @@ import ru.inodinln.social_network.dto.usersDTO.UserCreatingDTO;
 import ru.inodinln.social_network.dto.usersDTO.UserUpdatingDTO;
 import ru.inodinln.social_network.dto.usersDTO.UserViewDTO;
 import ru.inodinln.social_network.facades.UserFacade;
-import ru.inodinln.social_network.services.UserService;
 
 import java.util.List;
 
@@ -19,11 +20,9 @@ import java.util.List;
 public class UserController {
 
     private final UserFacade userFacade;
-    private final UserService userService;
 
-    public UserController (UserFacade userFacade, UserService userService) {
+    public UserController (UserFacade userFacade) {
         this.userFacade = userFacade;
-        this.userService = userService;
     }
 
     ////////////////////////////Business methods section///////////////////////////////////////
@@ -31,30 +30,37 @@ public class UserController {
     @GetMapping("/membersOfConversation/{conversationId}")
     public ResponseEntity<List<UserViewDTO>> getMembersByConversationId
             (@PathVariable("conversationId") Long conversationId,
-             @RequestParam(required = false, defaultValue = "0") Integer page,
-             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
-        return new ResponseEntity<>(userFacade.getMembersByConversationId(conversationId, page, itemsPerPage), HttpStatus.OK);
+             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+             @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage,
+             Authentication authentication) {
+        return new ResponseEntity<>(userFacade.getMembersByConversationId(conversationId, page, itemsPerPage,
+                ((UserDetails) authentication.getPrincipal()).getUsername()), HttpStatus.OK);
     }
 
     @PostMapping("/setRole/{userId}")
-    public ResponseEntity<Void> setRole(@PathVariable("userId") Long userId, @RequestParam("role") Integer roleId) {
-        userService.setRole(userId ,roleId);
+    public ResponseEntity<Void> setRole
+            (@PathVariable("userId") Long userId,
+             @RequestParam(name = "role", required = false, defaultValue = "ROLE_ADMIN") String role) {
+        userFacade.setRole(userId ,role);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     ////////////////////////////Statistics methods section///////////////////////////////////////
 
     @GetMapping("/statistics/mostActive")
-    public ResponseEntity<List<StatisticsUserViewDTO>> get10mostActive(@RequestBody StatisticsRequestDTO requestDto){
-        return new ResponseEntity<>(userFacade.get10mostActive(requestDto), HttpStatus.OK);
+    public ResponseEntity<List<StatisticsUserViewDTO>> getMostActiveUsers
+            (@RequestBody StatisticsRequestDTO requestDto,
+             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+             @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage){
+        return new ResponseEntity<>(userFacade.getMostActiveUsers(requestDto, page, itemsPerPage), HttpStatus.OK);
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
     @GetMapping
     public ResponseEntity <List<UserViewDTO>> getAll
-            (@RequestParam(required = false, defaultValue = "0") Integer page,
-             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage){
+            (@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+             @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage){
        return new ResponseEntity<>(userFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 
@@ -69,13 +75,15 @@ public class UserController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<UserViewDTO> update(@RequestBody UserUpdatingDTO userToBeUpdatedDTO) {
-        return new ResponseEntity<> (userFacade.update(userToBeUpdatedDTO), HttpStatus.OK);
+    public ResponseEntity<UserViewDTO> update(@RequestBody UserUpdatingDTO userToBeUpdatedDTO,
+                                              Authentication authentication) {
+        return new ResponseEntity<> (userFacade.update(userToBeUpdatedDTO,
+                ((UserDetails) authentication.getPrincipal()).getUsername()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> delete(@PathVariable("userId") Long userId) {
-        userService.delete(userId);
+        userFacade.delete(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

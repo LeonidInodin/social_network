@@ -2,6 +2,7 @@ package ru.inodinln.social_network.entities;
 
 
 import lombok.Data;
+import ru.inodinln.social_network.security.Roles;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -28,7 +29,8 @@ public class User {
 
     private LocalDate birthDate;
 
-    private Integer roleId;
+    @Enumerated(EnumType.STRING)
+    private Roles role;
 
     private Long countOfSubscribers;
 
@@ -64,7 +66,7 @@ public class User {
     private void prePersist() {
         regDate = LocalDate.now();
         countOfSubscribers = 0L;
-        roleId = 1;
+        role = Roles.ROLE_USER;
     }
 
 }

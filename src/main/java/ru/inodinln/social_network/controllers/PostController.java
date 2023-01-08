@@ -26,24 +26,25 @@ public class PostController {
     @GetMapping("/newsFeed/{userId}")
     public ResponseEntity<List<PostViewDTO>> getNewsFeedByUserId
             (@PathVariable("userId") Long userId,
-             @RequestParam(required = false, defaultValue = "0") Integer page,
-             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+             @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(postFacade.getNewsFeedByUserId(userId, page, itemsPerPage), HttpStatus.OK);
     }
 
     @GetMapping("/userId/{userId}")
     public ResponseEntity<List<PostViewDTO>> getPostsByUserId
             (@PathVariable("userId") Long userId,
-             @RequestParam(required = false, defaultValue = "0") Integer page,
-             @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+             @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+             @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(postFacade.getPostsByUserId(userId, page, itemsPerPage), HttpStatus.OK);
     }
 
     ////////////////////////////Statistics methods section///////////////////////////////////////
 
     @GetMapping("/statistics/quantityForThePeriod")
-    public ResponseEntity<Long> quantityForThePeriod(@RequestBody StatisticsRequestDTO requestDto){
-        return new ResponseEntity<>(postFacade.quantityForThePeriod(requestDto), HttpStatus.OK);
+    public ResponseEntity<String> quantityForThePeriod(@RequestBody StatisticsRequestDTO requestDto){
+        return new ResponseEntity<>(postFacade.quantityForThePeriod(requestDto).toString(), HttpStatus.OK);
+        //return ResponseEntity.ok(postFacade.quantityForThePeriod(requestDto));
     }
 
     @GetMapping("/statistics/averageQuantityPerDayForThePeriod")
@@ -64,8 +65,8 @@ public class PostController {
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     @GetMapping
     public ResponseEntity<List<PostViewDTO>> getAll
-    (@RequestParam(required = false, defaultValue = "0") Integer page,
-     @RequestParam(required = false, defaultValue = "10") Integer itemsPerPage) {
+    (@RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
+     @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage) {
         return new ResponseEntity<>(postFacade.getAll(page, itemsPerPage), HttpStatus.OK);
     }
 

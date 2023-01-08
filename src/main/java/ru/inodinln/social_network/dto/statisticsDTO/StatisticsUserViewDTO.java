@@ -8,6 +8,6 @@ public class StatisticsUserViewDTO {
 
     private UserReducedViewDTO user;
 
-    private Double value;
+    private Long value;
 
 }

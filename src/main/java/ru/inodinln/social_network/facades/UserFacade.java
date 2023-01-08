@@ -25,19 +25,26 @@ public class UserFacade {
 
     ////////////////////////////Business methods section///////////////////////////////////////
 
-    public List<UserViewDTO> getMembersByConversationId(Long conversationId, Integer page, Integer itemsPerPage){
+    public List<UserViewDTO> getMembersByConversationId(Long conversationId, Integer page, Integer itemsPerPage, String eMail){
         return MapperService.mapperForCollectionOfUserViewDTO
-                (userService.getMembersByConversationId(conversationId, page, itemsPerPage));
+                (userService.getMembersByConversationId(conversationId, page, itemsPerPage, eMail));
+    }
+
+    public void setRole(Long userId, String role){
+        ValidationService.roleValidation(role);
+        userService.setRole(userId, role);
     }
 
     ////////////////////////////Statistics methods section///////////////////////////////////////
 
-    public List<StatisticsUserViewDTO> get10mostActive(StatisticsRequestDTO dto){
+    public List<StatisticsUserViewDTO> getMostActiveUsers(StatisticsRequestDTO dto, Integer page, Integer itemsPerPage){
         if (dto.getEndOfPeriod() == null)
-            dto.setEndOfPeriod(LocalDate.now());
+            dto.setEndOfPeriod(LocalDate.now().plusDays(1));
+        if (dto.getStartOfPeriod().isEqual(dto.getEndOfPeriod()))
+            dto.setEndOfPeriod(dto.getEndOfPeriod().plusDays(1));
         ValidationService.statisticsRequestDtoValidation(dto);
         return MapperService.mapperForCollectionOfStatisticsUserViewDTO
-                (userService.get10mostActive(dto.getStartOfPeriod(), dto.getEndOfPeriod()));
+                (userService.getMostActiveUsers(dto.getStartOfPeriod(), dto.getEndOfPeriod(), page, itemsPerPage));
     }
 
 
@@ -59,12 +66,17 @@ public class UserFacade {
 
     }
 
-    public UserViewDTO update(UserUpdatingDTO updatingDTO) {
+    public UserViewDTO update(UserUpdatingDTO updatingDTO, String currentEmail) {
 
         ValidationService.userUpdatingDtoValidation(updatingDTO);
 
         return MapperService.mapperForSingleUserViewDTO(userService.update(updatingDTO.getId(), updatingDTO.getFirstName(),
-                updatingDTO.getLastName(), updatingDTO.getEMail(), updatingDTO.getPassword(), updatingDTO.getBirthDate()));
+                updatingDTO.getLastName(), updatingDTO.getEMail(),
+                updatingDTO.getPassword(), updatingDTO.getBirthDate(), currentEmail));
+    }
+
+    public void delete(Long userId){
+        userService.delete(userId);
     }
 
 }
