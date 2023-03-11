@@ -15,6 +15,7 @@ import ru.inodinln.social_network.dto.subscriptionsDTO.SubscriptionViewDTO;
 import ru.inodinln.social_network.dto.usersDTO.UserReducedViewDTO;
 import ru.inodinln.social_network.dto.usersDTO.UserViewDTO;
 import ru.inodinln.social_network.entities.*;
+import ru.inodinln.social_network.security.AuthenticationResponseDTO;
 
 import java.util.Comparator;
 import java.util.List;
@@ -60,6 +61,13 @@ public class MapperService {
     public static UserReducedViewDTO mapperForSingleUserReducedViewDTO(User user) {
         UserReducedViewDTO dto = new UserReducedViewDTO();
         BeanUtils.copyProperties(user, dto);
+        return dto;
+    }
+
+    public static AuthenticationResponseDTO mapperForAuthResponseDTO(Map.Entry<Long, String> entry) {
+        AuthenticationResponseDTO dto = new AuthenticationResponseDTO();
+        dto.setId(entry.getKey());
+        dto.setJwt(entry.getValue());
         return dto;
     }
 

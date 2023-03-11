@@ -27,14 +27,12 @@ public class SubscriptionService {
 
     //Get all subscriptions by current user:
     public List<Subscription> getSubscriptionsByUser(Long userId, Integer page, Integer itemsPerPage) {
-        return subscriptionRepository.findBySubscriber(userService.getById(userId), PageRequest.of(page, itemsPerPage))
-                .orElseThrow(() -> new NotFoundException("Not found subscriptions by user with id " + userId));
+        return subscriptionRepository.findBySubscriber(userService.getById(userId), PageRequest.of(page, itemsPerPage));
     }
 
     //Get all subscriptions to current user:
     public List<Subscription> getSubscriptionsToUser(Long userId, Integer page, Integer itemsPerPage) {
-        return subscriptionRepository.findByTarget(userService.getById(userId), PageRequest.of(page, itemsPerPage))
-                .orElseThrow(() -> new NotFoundException("Not found subscriptions to user with id " + userId));
+        return subscriptionRepository.findByTarget(userService.getById(userId), PageRequest.of(page, itemsPerPage));
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////

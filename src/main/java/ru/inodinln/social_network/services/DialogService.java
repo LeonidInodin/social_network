@@ -28,24 +28,18 @@ public class DialogService {
     ////////////////////////////Business methods section///////////////////////////////////////
     public List<Dialog> getUsersDialogs(Long userId, Integer page, Integer itemsPerPage){
         User user = userService.getById(userId);
-        List<Dialog> list = dialogRepository.findDialogsByAuthorAndCompanion(user, user, PageRequest.of(page, itemsPerPage))
+        return dialogRepository.findDialogsByAuthorAndCompanion(user, user, PageRequest.of(page, itemsPerPage))
                 .stream().peek((e) -> {
                     if (e.getAuthor().equals(user))
                         e.setAuthor(null);
                     else e.setCompanion(null);
                 }).toList();
-        if (list.isEmpty())
-            throw new NotFoundException("Not found dialogs by user with id: " + userId);
-        return list;
     }
 
     ////////////////////////////Admin methods section///////////////////////////////////////
     public List<Dialog> getDialogsByUserId(Long userId, Integer page, Integer itemsPerPage){
         User user = userService.getById(userId);
-        List<Dialog> list = dialogRepository.findDialogsByAuthorAndCompanion(user, user, PageRequest.of(page, itemsPerPage));
-        if (list.isEmpty())
-            throw new NotFoundException("Not found dialogs by user with id: " + userId);
-        return list;
+       return dialogRepository.findDialogsByAuthorAndCompanion(user, user, PageRequest.of(page, itemsPerPage));
     }
 
     ////////////////////////////Service methods section///////////////////////////////////////
@@ -61,10 +55,7 @@ public class DialogService {
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
     public List<Dialog> getAll(Integer page, Integer itemsPerPage) {
-        List<Dialog> list = dialogRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
-        if (list.isEmpty())
-            throw new NotFoundException("Not found any dialogs");
-        return list;
+        return dialogRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
     }
 
     public Dialog getById(Long dialogId) {

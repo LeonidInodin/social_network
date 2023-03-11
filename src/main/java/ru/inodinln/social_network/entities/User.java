@@ -1,7 +1,9 @@
 package ru.inodinln.social_network.entities;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.inodinln.social_network.security.Roles;
 
 import javax.persistence.*;
@@ -10,6 +12,8 @@ import java.util.List;
 
 @Data
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -36,30 +40,6 @@ public class User {
 
     @ManyToMany(mappedBy = "members")
     private List<Conversation> conversations;
-
-    @OneToMany(mappedBy = "author")
-    private List<Dialog> authorDialogs;
-
-    @OneToMany(mappedBy = "companion")
-    private List<Dialog> companionDialogs;
-
-    @OneToMany(mappedBy = "target")
-    private List<Subscription> subscriptionsToItself;
-
-    @OneToMany(mappedBy = "subscriber")
-    private List<Subscription> subscriptionsToOther;
-
-    @OneToMany(mappedBy = "sender")
-    private List<Message> sentMessages;
-
-    @OneToMany(mappedBy = "recipient")
-    private List<Message> receivedMessages;
-
-    @OneToMany(mappedBy = "author")
-    private List<Comment> comments;
-
-    @OneToMany(mappedBy = "author")
-    private List<Like> likes;
 
 
     @PrePersist

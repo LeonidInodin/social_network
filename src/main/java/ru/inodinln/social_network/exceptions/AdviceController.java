@@ -1,6 +1,7 @@
 package ru.inodinln.social_network.exceptions;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +25,11 @@ public class AdviceController {
     @ExceptionHandler(value = {NotFoundException.class})
     @ResponseStatus(value = HttpStatus.NOT_FOUND)
     public ErrorMessage NotFoundException(NotFoundException ex, WebRequest request) {
-       // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
+        // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
         return new ErrorMessage(
                 HttpStatus.NOT_FOUND.value(),
                 LocalDateTime.now(),
+                ex.getClass().toString(),
                 ex.getMessage(),
                 request.getDescription(false));
     }
@@ -35,10 +37,11 @@ public class AdviceController {
     @ExceptionHandler(value = {ValidationException.class})
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)
     public ErrorMessage ValidationException(ValidationException ex, WebRequest request) {
-       // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
+        // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
         return new ErrorMessage(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 LocalDateTime.now(),
+                ex.getClass().toString(),
                 ex.getMessage(),
                 request.getDescription(false));
     }
@@ -50,6 +53,7 @@ public class AdviceController {
         return new ErrorMessage(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
                 LocalDateTime.now(),
+                ex.getClass().toString(),
                 ex.getMessage(),
                 request.getDescription(false));
     }
@@ -61,67 +65,87 @@ public class AdviceController {
         return new ErrorMessage(
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 LocalDateTime.now(),
+                ex.getClass().toString(),
                 ex.getMessage(),
                 request.getDescription(false));
     }
 
     @ExceptionHandler(value = {InvalidFormatException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<ErrorMessage> processConversionException(InvalidFormatException ex, WebRequest request) {
         //log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new ErrorMessage(
-                HttpStatus.BAD_REQUEST.value(),
-                LocalDateTime.now(),
-                ex.getMessage(),
-                request.getDescription(false)));
-    }
-
-    @ExceptionHandler(value = { MethodArgumentNotValidException.class })
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public  ResponseEntity<ErrorMessage> getMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
-       // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(
                         HttpStatus.BAD_REQUEST.value(),
                         LocalDateTime.now(),
                         ex.getMessage(),
+                        ex.getClass().toString(),
                         request.getDescription(false)));
     }
 
-    @ExceptionHandler(value = { SQLException.class })
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    public ResponseEntity<ErrorMessage> getMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
+        // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new ErrorMessage(
+                        HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                        LocalDateTime.now(),
+                        ex.getClass().toString(),
+                        ex.getMessage(),
+                        request.getDescription(false)));
+    }
+
+    @ExceptionHandler(value = {SQLException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public  ResponseEntity<ErrorMessage> getSQLException(SQLException ex, WebRequest request) {
+    public ResponseEntity<ErrorMessage> getSQLException(SQLException ex, WebRequest request) {
         //log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorMessage(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         LocalDateTime.now(),
+                        ex.getClass().toString(),
                         ex.getMessage(),
                         request.getDescription(false)));
     }
 
-    @ExceptionHandler(value = { IllegalArgumentException.class })
+    @ExceptionHandler(value = {IllegalArgumentException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public  ResponseEntity<ErrorMessage> getIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-       // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
+    public ResponseEntity<ErrorMessage> getIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
+        // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorMessage(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         LocalDateTime.now(),
+                        ex.getClass().toString(),
                         ex.getMessage(),
                         request.getDescription(false)));
     }
 
-    @ExceptionHandler(value = {AuthorizationException.class })
+    @ExceptionHandler(value = {AuthorizationException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public  ResponseEntity<ErrorMessage> getAuthorizationException(AuthorizationException ex, WebRequest request) {
+    public ResponseEntity<ErrorMessage> getAuthorizationException(AuthorizationException ex, WebRequest request) {
         // log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ErrorMessage(
                         HttpStatus.FORBIDDEN.value(),
                         LocalDateTime.now(),
+                        ex.getClass().toString(),
                         ex.getMessage(),
                         request.getDescription(false)));
     }
 
+    @ExceptionHandler(value = {ExpiredJwtException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ResponseEntity<ErrorMessage> expiredJwtException(ExpiredJwtException ex, WebRequest request) {
+        //log.error("An invalid request was rejected for reason: {}, {}", ex.getMessage(), ex.getClass());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorMessage(
+                        HttpStatus.FORBIDDEN.value(),
+                        LocalDateTime.now(),
+                        ex.getMessage(),
+                        ex.getClass().toString(),
+                        request.getDescription(false)));
+
+    }
 }

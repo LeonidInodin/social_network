@@ -35,14 +35,12 @@ public class PostService {
 
     public List<Post> getNewsFeedByUserId(Long userId, Integer page, Integer itemsPerPage) {
         return postRepository.getPostsByTarget(userService.getById(userId).getId(),
-                        PageRequest.of(page, itemsPerPage, Sort.by(DESC, "timestamp")))
-                .orElseThrow(() -> new NotFoundException("Not found posts for newsfeed for user with id " + userId));
+                        PageRequest.of(page, itemsPerPage, Sort.by(DESC, "timestamp")));
 
     }
 
     public List<Post> getPostsByUserId(Long userId, Integer page, Integer itemsPerPage) {
-        return postRepository.findPostsByAuthor(userService.getById(userId), PageRequest.of(page, itemsPerPage))
-                .orElseThrow(() -> new NotFoundException("Not found posts by user with id " + userId));
+        return postRepository.findPostsByAuthor(userService.getById(userId), PageRequest.of(page, itemsPerPage));
     }
 
     ////////////////////////////Statistics methods section///////////////////////////////////////
@@ -54,23 +52,18 @@ public class PostService {
     }
 
     public Long quantityForThePeriod(LocalDate startOfPeriod, LocalDate endOfPeriod) {
-        Long l = postRepository.countPostsByTimestampBetween(startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay());
-        System.out.println(l);
-        return l;
-
+        return postRepository.countPostsByTimestampBetween(startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay());
     }
 
     public List<Post> get10mostPopularByLikes(LocalDate startOfPeriod, LocalDate endOfPeriod) {
         return postRepository.findPostsByTimestampBetween
                         (startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay(), Sort.by("likes_count"))
-                .orElseThrow(() -> new NotFoundException("Not found any posts"))
                 .stream().limit(10).collect(Collectors.toList());
     }
 
     public List<Post> get10mostPopularByComments(LocalDate startOfPeriod, LocalDate endOfPeriod) {
         return postRepository.findPostsByTimestampBetween
                         (startOfPeriod.atStartOfDay(), endOfPeriod.atStartOfDay(), Sort.by("comments_count"))
-                .orElseThrow(() -> new NotFoundException("Not found any posts"))
                 .stream().limit(10).collect(Collectors.toList());
 
     }

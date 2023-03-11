@@ -8,11 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import ru.inodinln.social_network.dto.statisticsDTO.StatisticsRequestDTO;
 import ru.inodinln.social_network.dto.statisticsDTO.StatisticsUserViewDTO;
-import ru.inodinln.social_network.dto.usersDTO.UserCreatingDTO;
 import ru.inodinln.social_network.dto.usersDTO.UserUpdatingDTO;
 import ru.inodinln.social_network.dto.usersDTO.UserViewDTO;
 import ru.inodinln.social_network.facades.UserFacade;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -49,7 +49,7 @@ public class UserController {
 
     @GetMapping("/statistics/mostActive")
     public ResponseEntity<List<StatisticsUserViewDTO>> getMostActiveUsers
-            (@RequestBody StatisticsRequestDTO requestDto,
+            (@RequestBody @Valid StatisticsRequestDTO requestDto,
              @RequestParam(name = "page", required = false, defaultValue = "0") Integer page,
              @RequestParam(name = "itemsPerPage", required = false, defaultValue = "10") Integer itemsPerPage){
         return new ResponseEntity<>(userFacade.getMostActiveUsers(requestDto, page, itemsPerPage), HttpStatus.OK);
@@ -69,13 +69,8 @@ public class UserController {
         return new ResponseEntity<>(userFacade.getById(userId), HttpStatus.OK);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<UserViewDTO> create(@RequestBody UserCreatingDTO newUserDTO) {
-        return new ResponseEntity<>(userFacade.create(newUserDTO), HttpStatus.CREATED);
-    }
-
     @PutMapping("/update")
-    public ResponseEntity<UserViewDTO> update(@RequestBody UserUpdatingDTO userToBeUpdatedDTO,
+    public ResponseEntity<UserViewDTO> update(@RequestBody @Valid UserUpdatingDTO userToBeUpdatedDTO,
                                               Authentication authentication) {
         return new ResponseEntity<> (userFacade.update(userToBeUpdatedDTO,
                 ((UserDetails) authentication.getPrincipal()).getUsername()), HttpStatus.OK);

@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  postgres:
+    image: 'postgres:15.2-alpine3.17'
+    container_name: 'java-postgres'
+    environment:
+      - 'POSTGRES_USER=postgres'
+      - 'POSTGRES_PASSWORD=postgres'
+      - 'POSTGRES_DB=social_network_db'
+    ports:
+      - 5432:5432
+    volumes:
+      - .:/docker-entrypoint-initdb.d
+
+  app:
+    build: ./
+    container_name: 'java_app'
+    ports:
+      - 8080:8080

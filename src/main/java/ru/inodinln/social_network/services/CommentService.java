@@ -31,27 +31,18 @@ public class CommentService {
     ////////////////////////////Business methods section///////////////////////////////////////
 
     public List<Comment> getCommentsTreeByPostId(Long postId, Integer page, Integer itemsPerPage) {
-        List<Comment> list = commentRepository.findCommentsByPostAndLevel
+        return commentRepository.findCommentsByPostAndLevel
                 (postService.getById(postId), 1, PageRequest.of(page, itemsPerPage));
-        if (list.isEmpty())
-            throw new NotFoundException("Comments not found by post with id " + postId);
-        return list;
     }
 
     public List<Comment> getCommentsByPostId(Long postId, Integer page, Integer itemsPerPage) {
-        List<Comment> list = commentRepository.findCommentsByPost
+        return commentRepository.findCommentsByPost
                 (postService.getById(postId), PageRequest.of(page, itemsPerPage));
-        if (list.isEmpty())
-            throw new NotFoundException("Comments not found by post with id " + postId);
-        return list;
     }
 
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
     public List<Comment> getAll(Integer page, Integer itemsPerPage) {
-        List<Comment> list = commentRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
-        if (list.isEmpty())
-            throw new NotFoundException("Comments not found");
-        return list;
+       return commentRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
     }
 
     public Comment getById(Long commentId) {
@@ -106,6 +97,6 @@ public class CommentService {
             throw new AuthorizationException("Forbidden action with current credentials");
 
         commentRepository.delete(comment);
-        postService.decreaseCountOfComments(comment.getPost().getId()); //prop
+        postService.decreaseCountOfComments(comment.getPost().getId());
     }
 }

@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "BETWEEN :startOfPeriod AND :endOfPeriod GROUP BY author_id) AS b ON a.id = b.author_id " +
             "ORDER BY b.posts_count DESC"
             , nativeQuery = true)
-    Optional<List<User>> getMostActiveUsers(@Param("startOfPeriod") LocalDateTime startOfPeriod,
+    List<User> getMostActiveUsers(@Param("startOfPeriod") LocalDateTime startOfPeriod,
                                             @Param("endOfPeriod") LocalDateTime endOfPeriod, Pageable pageable);
 
 

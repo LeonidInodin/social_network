@@ -10,11 +10,10 @@ import ru.inodinln.social_network.entities.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    Optional<List<Post>> findPostsByAuthor(User author, Pageable pageable);
+    List<Post> findPostsByAuthor(User author, Pageable pageable);
 
 
     ////////////////////////////Statistics methods section///////////////////////////////////////
@@ -23,11 +22,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Long countPostsByAuthorAndTimestampBetween(User user, LocalDateTime startOfPeriod, LocalDateTime endOfPeriod);
 
-    Optional<List<Post>> findPostsByTimestampBetween(LocalDateTime startOfPeriod, LocalDateTime endOfPeriod, Sort criteria);
+    List<Post> findPostsByTimestampBetween(LocalDateTime startOfPeriod, LocalDateTime endOfPeriod, Sort criteria);
 
    @Query(value = "SELECT a.* FROM post as a INNER JOIN subscription as b ON a.author_id = (SELECT b.target_id WHERE subscriber_id = :userId)"
            , nativeQuery = true)
-    Optional<List<Post>> getPostsByTarget(@Param("userId") Long userId, Pageable pageable);
+    List<Post> getPostsByTarget(@Param("userId") Long userId, Pageable pageable);
 
 
 }

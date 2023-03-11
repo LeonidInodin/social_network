@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import ru.inodinln.social_network.services.UserService;
 
 @Service
-public class BasicUserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class JwtUserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
 
     private final UserService userService;
 
-    public BasicUserDetailsService(UserService userService){
+    public JwtUserDetailsService(UserService userService){
         this.userService = userService;
     }
 

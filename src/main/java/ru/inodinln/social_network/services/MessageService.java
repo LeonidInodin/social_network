@@ -52,7 +52,7 @@ public class MessageService {
                 new NotFoundException("Message not found with id " + messageId));
     }
 
-    @Transactional //prop
+    @Transactional
     public Message create(String type, Long containerId, Long senderId, Long recipientId, String text) {
 
         Message newMessage = new Message();

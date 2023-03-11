@@ -1,0 +1,98 @@
+
+insert into users (id,
+                   first_name,
+                   last_name,
+                   email,
+                   password,
+                   reg_date,
+                   role,
+                   count_of_subscribers,
+                   birth_date)
+VALUES (10,
+        'Ivan',
+        'Ivanov',
+        'ivanov@mail.com',
+        '$2a$10$Kq7Ke66YCPApNC.nn4slQOlxsiS3QNHKqz6uHGQI7u9wlQCkUcqGW',
+        '2022-12-12',
+        'ROLE_USER',
+        0,
+        '1989-12-12');
+
+insert into users (id,
+                   first_name,
+                   last_name,
+                   email,
+                   password,
+                   reg_date,
+                   role,
+                   count_of_subscribers,
+                   birth_date)
+VALUES (11,
+        'Simon',
+        'Semenov',
+        'semenov@mail.com',
+        '$2a$10$Kq7Ke66YCPApNC.nn4slQOlxsiS3QNHKqz6uHGQI7u9wlQCkUcqGW',
+        '2022-12-12',
+        'ROLE_USER',
+        0,
+        '1989-11-12');
+
+insert into users (id,
+                   first_name,
+                   last_name,
+                   email,
+                   password,
+                   reg_date,
+                   role,
+                   count_of_subscribers,
+                   birth_date)
+VALUES (12,
+        'Leonid',
+        'Inodin',
+        'inodin@mail.com',
+        '$2a$10$Kq7Ke66YCPApNC.nn4slQOlxsiS3QNHKqz6uHGQI7u9wlQCkUcqGW',
+        '2022-12-12',
+        'ROLE_ADMIN',
+        0,
+        '1989-12-12');
+
+insert into post (id,
+                   author_id,
+                   timestamp,
+                   text,
+                   timestamp_of_updating,
+                   comments_count,
+                   likes_count)
+VALUES (20,
+        10,
+        '2022-12-15 13:23:46.458999',
+        'Test post by user #10',
+        null,
+        0,
+        0),
+    (
+        21,
+        10,
+        '2022-12-16 13:23:46.458999',
+        'Test post by user #10',
+        null,
+        0,
+        0
+),
+    (
+            22,
+            10,
+            '2022-12-16 14:23:46.458999',
+            'Test post by user #10',
+            null,
+            0,
+            0
+       ), (
+           23,
+           11,
+           '2022-12-16 14:23:46.458999',
+           'Test post by user #11',
+           null,
+           0,
+           0
+       );

@@ -28,11 +28,8 @@ public class ConversationService {
 
     ////////////////////////////Business methods section///////////////////////////////////////
     public List<Conversation> getConversationsByUserId(Long userId, Integer page, Integer itemsPerPage) {
-        List<Conversation> list = conversationRepository.findConversationsByMembersContaining
+        return conversationRepository.findConversationsByMembersContaining
                 (userService.getById(userId), PageRequest.of(page, itemsPerPage));
-        if (list.isEmpty())
-            throw new NotFoundException("Not found conversations by user with id: " + userId);
-        return list;
     }
 
     @Transactional
@@ -66,10 +63,7 @@ public class ConversationService {
     ////////////////////////////Basic CRUD methods section///////////////////////////////////////
 
     public List<Conversation> getAll(Integer page, Integer itemsPerPage) {
-        List<Conversation> list = conversationRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
-        if (list.isEmpty())
-            throw new NotFoundException("Not found conversations");
-        return list;
+        return conversationRepository.findAll(PageRequest.of(page, itemsPerPage)).getContent();
     }
 
     public Conversation getById(Long conversationId) {

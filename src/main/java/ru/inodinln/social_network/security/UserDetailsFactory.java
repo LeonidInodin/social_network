@@ -4,7 +4,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.inodinln.social_network.entities.User;
-import ru.inodinln.social_network.security.basic.BasicAuthUser;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,7 +12,7 @@ public final class UserDetailsFactory {
 
     public static UserDetails create(User user) {
 
-        return new BasicAuthUser() {
+        return new JwtUserDetails() {
             @Override
             public Collection<? extends GrantedAuthority> getAuthorities() {
                 return Collections.singletonList(new SimpleGrantedAuthority(user.getRole().name()));
